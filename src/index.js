@@ -1,14 +1,16 @@
-const router = require('../router/genres');
+const genresRouter = require('../router/genres');
+const customersRouter = require('../router/customers');
 const mongoose = require('mongoose');
 const express = require('express');
 const app = express();
 const port = process.env.PORT || 3000;
 
 app.use(express.json());
-app.use(router)
+app.use(genresRouter);
+app.use(customersRouter);
 
 app.get('/', (req, res) => {
-    res.send('Hello world');
+    res.send('Initiallise headless application.');
 });
 
 mongoose.connect('mongodb://localhost/movieShack')
