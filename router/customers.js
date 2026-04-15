@@ -19,31 +19,11 @@ router.get('/api/customers/:id', async (req, res) => {
     res.send(customer);
 });
 
-router.put('/api/customers/:id', async (req, res) => {
-    const customerId = req.params.id;
-    const customer = await Customer.findById(customerId);
-
-    const name = req.body.name;
-    const surname = req.body.surname;
-
-    if (!customer) res.status(404).send('The customer does not exist.');
-    if (!validate(req.body)) {
-        res.status(400).send("Data is malformed.");
-    }
-
-    customer.name = name;
-    customer.surname = surname;
-
-    await customer.save;
-
-    res.send(customer);
-});
-
 router.post('/api/customers/', async (req, res) => {
     const name = req.body.name;
     const surname = req.body.surname;
-
-    if (!validate(req.body)) {
+    const { error } = validate(req.body);
+    if (error) {
         res.status(400).send("Data is malformed.");
     }
 
@@ -55,7 +35,28 @@ router.post('/api/customers/', async (req, res) => {
     await customer.save();
 
     res.send(customer);
-})
+});
+
+router.put('/api/customers/:id', async (req, res) => {
+    const customerId = req.params.id;
+    const customer = await Customer.findById(customerId);
+
+    const name = req.body.name;
+    const surname = req.body.surname;
+
+    const { error } = validate(req.body);
+    if (!customer) res.status(404).send('The customer does not exist.');
+    if (error) {
+        res.status(400).send("Data is malformed.");
+    }
+
+    customer.name = name;
+    customer.surname = surname;
+
+    await customer.save;
+
+    res.send(customer);
+});
 
 router.delete('/api/customers/:id', async (req, res) => {
     const customerId = req.params.id;
@@ -65,6 +66,6 @@ router.delete('/api/customers/:id', async (req, res) => {
     await Customer.deleteOne(customer);
 
     res.send(customerId);
-})
+});
 
 module.exports = router;

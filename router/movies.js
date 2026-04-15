@@ -25,7 +25,8 @@ router.post('/api/movies/', async (req, res) => {
     const numberInStock = req.body.numberInStock;
     const dailyRentalRate = req.body.dailyRentalRate;
 
-    if (!validate(title)) {
+    const { error } = validate(req.body);
+    if (error) {
         res.status(400).send('Reqest no valid');
     }
 
@@ -48,7 +49,8 @@ router.put('/api/movies/:id', async (req, res) => {
     const movie = await Movie.findById(movieId);
 
     if (!movie) res.status(404).send('An error occured.');
-    if (!validate) {
+    const { error } = validate(req.body);
+    if (error) {
         res.status(400).send('Request no valid.');
     }
 
