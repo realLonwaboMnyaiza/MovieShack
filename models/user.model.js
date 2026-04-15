@@ -1,3 +1,5 @@
+require("dotenv");
+const jwt = require("jsonwebtoken");
 const Joi = require("joi");
 const mongoose = require("mongoose");
 
@@ -38,7 +40,14 @@ const schema = new mongoose.Schema({
     required: true,
     unique: true,
   },
+  isAdmin: Boolean,
 });
+
+schema.methods.generateAuthenticationToken = function () {
+  const privateKey = process.env.TOKEN;
+  const payload = { _id: this._id, isAdmin: this.isAdmin };
+  return jwt.sign(payload, privateKey, { expiresIn: "24h" });
+};
 
 const model = mongoose.model(name, schema);
 

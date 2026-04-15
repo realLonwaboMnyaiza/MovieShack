@@ -1,6 +1,4 @@
-require("dotenv");
 const Joi = require("joi");
-const jwt = require("jsonwebtoken");
 
 function validateUsingJoi(input) {
   const schema = Joi.object({
@@ -11,13 +9,4 @@ function validateUsingJoi(input) {
   return schema.validate(input);
 }
 
-function generateJwt() {
-  const privateKey = process.env.TOKEN;
-  const payload = { _id: user._id };
-  const token = jwt.sign(payload, privateKey, { expiresIn: "24h" });
-
-  return token;
-}
-
 module.exports.validate = validateUsingJoi;
-module.exports.generateToken = generateJwt;
