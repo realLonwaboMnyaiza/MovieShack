@@ -1,4 +1,4 @@
-const dotenv = require("dotenv");
+require("dotenv");
 const mongoose = require("mongoose");
 const express = require("express");
 const Joi = require("joi");

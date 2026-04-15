@@ -1,11 +1,12 @@
-const dotenv = require("dotenv");
 const express = require("express");
 const router = express.Router();
 const _ = require("lodash");
 const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
 const { User, validate } = require("../models/user.model");
-const authenticationValidation = require("../models/auth.model");
+const {
+  generateToken,
+  validate: authenticationValidation,
+} = require("../models/auth.model");
 
 router.post("/api/register/", async (req, res) => {
   const { error } = validate(req.body);
@@ -65,11 +66,7 @@ router.post("/api/login", async (req, res) => {
   if (!hasAuthenticationCredentials)
     return res.status(400).send("Email or password provided is invalid.");
 
-  // todo: need to store in env file... N.B. this is a placeholder and key will not be in this shape.
-  const privateKey = process.env.TOKEN;
-  const payload = { _id: user._id };
-  const token = jwt.sign(payload, privateKey, { expiresIn: "24h" });
-
+  const token = generateToken();
   res.send(token);
 });
 
