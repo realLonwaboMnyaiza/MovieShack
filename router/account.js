@@ -1,3 +1,4 @@
+const dotenv = require("dotenv");
 const express = require("express");
 const router = express.Router();
 const _ = require("lodash");
@@ -65,8 +66,9 @@ router.post("/api/login", async (req, res) => {
     return res.status(400).send("Email or password provided is invalid.");
 
   // todo: need to store in env file... N.B. this is a placeholder and key will not be in this shape.
-  const privateKey = "jwtPrivateKey";
-  const token = jwt.sign({ _id: user._id }, privateKey);
+  const privateKey = process.env.TOKEN;
+  const payload = { _id: user._id };
+  const token = jwt.sign(payload, privateKey, { expiresIn: "24h" });
 
   res.send(token);
 });
