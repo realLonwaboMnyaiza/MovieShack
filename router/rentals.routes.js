@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const auth = require("../middleware/auth.middleware");
+const authenticationMiddleware = require("../middleware/authentication.middleware");
 const { Rental, validate } = require("../models/rental.model");
 const { Customer } = require("../models/customer.model");
 const { Movie } = require("../models/movie.model");
@@ -10,43 +10,47 @@ router.get("/api/rental/", async (req, res) => {
   res.status(200).send(rentals);
 });
 
-router.post("/api/rental/checkout", auth, async (req, res) => {
-  const { error } = validate(req.body);
-  if (error) res.status(400).send("An error occured.");
+router.post(
+  "/api/rental/checkout",
+  authenticationMiddleware,
+  async (req, res) => {
+    const { error } = validate(req.body);
+    if (error) res.status(400).send("An error occured.");
 
-  const customerId = req.body.customerId;
-  const movieId = req.body.movieId;
-  const customer = await Customer.findById(customerId);
-  const movie = await Movie.findById(movieId);
+    const customerId = req.body.customerId;
+    const movieId = req.body.movieId;
+    const customer = await Customer.findById(customerId);
+    const movie = await Movie.findById(movieId);
 
-  if (!customer || !movie)
-    res.status(400).send("Valid customer and movie is required.");
+    if (!customer || !movie)
+      res.status(400).send("Valid customer and movie is required.");
 
-  if (movie.numberInStock < 1) res.status(400).send("Movie is out of stock.");
+    if (movie.numberInStock < 1) res.status(400).send("Movie is out of stock.");
 
-  const rental = await new Rental({
-    customer,
-    movie,
-  });
+    const rental = await new Rental({
+      customer,
+      movie,
+    });
 
-  try {
-    // todo: using lib to accomplish two-phase commit (ACID transations)
-    // check for this packages vuln and alternatives...
-    new Fawn.Task()
-      .save("rentals", rental)
-      .update(
-        "movies",
-        { _id: movie._id },
-        {
-          $inc: { numberInStock: -1 },
-        },
-      )
-      .run();
-  } catch (error) {
-    res.status(500).send("Transaction failed.");
-  }
+    try {
+      // todo: using lib to accomplish two-phase commit (ACID transations)
+      // check for this packages vuln and alternatives...
+      new Fawn.Task()
+        .save("rentals", rental)
+        .update(
+          "movies",
+          { _id: movie._id },
+          {
+            $inc: { numberInStock: -1 },
+          },
+        )
+        .run();
+    } catch (error) {
+      res.status(500).send("Transaction failed.");
+    }
 
-  res.status(401).send("Movie has been checked out.");
-});
+    res.status(401).send("Movie has been checked out.");
+  },
+);
 
 module.exports = router;
