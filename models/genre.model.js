@@ -22,4 +22,5 @@ function validateUsingJoi(input) {
 }
 
 module.exports.Genre = Model;
+module.exports.genreSchema = schema;
 module.exports.validate = validateUsingJoi;
