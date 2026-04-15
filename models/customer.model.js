@@ -15,6 +15,10 @@ const schema = new mongoose.Schema({
         minLength: 5,
         maxLength: 50,
     },
+    isPremium: {
+        type: Boolean,
+        default: false,
+    }
 });
 
 const model = mongoose.model(modelName, schema);
@@ -23,6 +27,7 @@ function validateWithJoi(input) {
     const schema = Joi.object({
         name: Joi.string().min(5).max(50).required(),
         surname: Joi.string().min(5).max(50).required(),
+        isPremium: Joi.boolean().required(),
     });
 
     return schema.validate(input);
