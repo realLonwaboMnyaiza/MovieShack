@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const _ = require("lodash");
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 const { User, validate } = require("../models/user.model");
 const authenticationValidation = require("../models/auth.model");
 
@@ -63,7 +64,11 @@ router.post("/api/login", async (req, res) => {
   if (!hasAuthenticationCredentials)
     return res.status(400).send("Email or password provided is invalid.");
 
-  res.send(true);
+  // todo: need to store in env file... N.B. this is a placeholder and key will not be in this shape.
+  const privateKey = "jwtPrivateKey";
+  const token = jwt.sign({ _id: user._id }, privateKey);
+
+  res.send(token);
 });
 
 module.exports = router;
