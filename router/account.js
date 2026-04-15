@@ -3,6 +3,7 @@ const router = express.Router();
 const _ = require("lodash");
 const bcrypt = require("bcrypt");
 const { User, validate } = require("../models/user.model");
+const authenticationValidation = require("../models/auth.model");
 
 router.post("/api/register/", async (req, res) => {
   const { error } = validate(req.body);
@@ -44,6 +45,25 @@ router.post("/api/register/", async (req, res) => {
   res.status(401).send("User has been registered.");
 });
 
-router.post("/api/login", async (req, res) => {});
+router.post("/api/login", async (req, res) => {
+  const { error } = authenticationValidation(req.body);
+  if (error) return res.status(400).send(error.details[0].message);
+
+  const email = req.body.email;
+  const password = req.body.password;
+
+  const user = await User.findOne({ email });
+  if (!user)
+    return res.status(400).send("Email or password provided is invalid.");
+
+  const hasAuthenticationCredentials = await bcrypt.compare(
+    password,
+    user.password,
+  );
+  if (!hasAuthenticationCredentials)
+    return res.status(400).send("Email or password provided is invalid.");
+
+  res.send(true);
+});
 
 module.exports = router;
