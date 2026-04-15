@@ -2,7 +2,6 @@ const Joi = require("joi");
 const mongoose = require("mongoose");
 const { customerSchema } = require("./customer.model");
 const { movieDto } = require("./movie.model");
-Joi.objectId = require("joi-objectid");
 
 const name = "Rental";
 const schema = new mongoose.Schema({
