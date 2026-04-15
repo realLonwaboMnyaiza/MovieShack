@@ -58,9 +58,10 @@ router.put('/api/movies/:id', async (req, res) => {
     if (!genreId) res.status(400).send('Genre id invalid');
 
     const title = req.body.title;
-    const genre = await Genre.findById(genreId);
     const numberOfStock = req.body.numberInStock;
     const dailyRentalRate = req.body.dailyRentalRate;
+
+    const genre = await Genre.findById(genreId);
 
     movie.title = title;
     movie.genre = genre;

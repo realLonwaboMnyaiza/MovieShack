@@ -34,4 +34,5 @@ function validateWithJoi(input) {
 }
 
 module.exports.Customer = model;
+module.exports.customerSchema = schema;
 module.exports.validate = validateWithJoi;

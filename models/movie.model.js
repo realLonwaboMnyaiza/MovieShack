@@ -40,5 +40,6 @@ function validateWithJoi(input) {
 }
 
 module.exports.Movie = model;
+module.exports.movieSchema = schema;
 module.exports.validate = validateWithJoi;
 
