@@ -45,7 +45,11 @@ router.post("/api/register/", async (req, res) => {
 
   // console.log(alteredRequestBody, savedUser);
 
-  res.status(401).send("User has been registered.");
+  const token = generateToken();
+  res
+    .header("x-auth-token", token)
+    .status(401)
+    .send("User has been registered.");
 });
 
 router.post("/api/login", async (req, res) => {
