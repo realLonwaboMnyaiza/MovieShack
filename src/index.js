@@ -2,6 +2,9 @@ require("dotenv");
 const mongoose = require("mongoose");
 const express = require("express");
 const Joi = require("joi");
+const formatRequestBody = express.json();
+const authenticationMiddleware = require("../middleware/authentication.middleware");
+const authorizationMiddleware = require("../middleware/authorization.middleware");
 const genresRouter = require("../router/genres");
 const customersRouter = require("../router/customers");
 const movieRouter = require("../router/movies");
@@ -22,7 +25,10 @@ if (!process.env.TOKEN) {
   process.exit(1);
 }
 
-app.use(express.json());
+app.use(formatRequestBody);
+app.use(authenticationMiddleware);
+app.use(authorizationMiddleware);
+
 app.use(genresRouter);
 app.use(customersRouter);
 app.use(movieRouter);
