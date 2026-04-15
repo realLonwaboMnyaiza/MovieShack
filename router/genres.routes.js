@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
-const auth = require("../middleware/auth.middleware");
+const authenticationMiddleware = require("../middleware/authentication.middleware");
+const authorizationMiddleware = require("../middleware/authorization.middleware");
 const { Genre, validate } = require("../models/genre.model");
 
 const minGenresLength = 5;
@@ -25,53 +26,65 @@ router.get("/api/genres/:id", async (req, res) => {
   res.send(genre);
 });
 
-router.post("/api/genres", auth, async (req, res) => {
-  const genreName = req.body.name;
-  const { error } = validate(genreName);
-  if (error) {
-    res
-      .status(400)
-      .send(
-        `Name property must be at least ${minGenresLength} characters long.`,
-      );
-  }
+router.post(
+  "/api/genres",
+  [authenticationMiddleware, authorizationMiddleware],
+  async (req, res) => {
+    const genreName = req.body.name;
+    const { error } = validate(genreName);
+    if (error) {
+      res
+        .status(400)
+        .send(
+          `Name property must be at least ${minGenresLength} characters long.`,
+        );
+    }
 
-  const genre = new Genre({ name: genreName });
-  const result = await genre.save();
-  console.log(result);
+    const genre = new Genre({ name: genreName });
+    const result = await genre.save();
+    console.log(result);
 
-  res.status(201).send("Genre created:\n", result);
-});
+    res.status(201).send("Genre created:\n", result);
+  },
+);
 
-router.put("/api/genres/:id", auth, async (req, res) => {
-  const genreId = req.params.id;
-  const genreName = req.body.name;
-  const genre = await Genre.findById(genreId);
-  if (!genre) res.status(404).send("The genre id does not exist");
+router.put(
+  "/api/genres/:id",
+  [authenticationMiddleware, authorizationMiddleware],
+  async (req, res) => {
+    const genreId = req.params.id;
+    const genreName = req.body.name;
+    const genre = await Genre.findById(genreId);
+    if (!genre) res.status(404).send("The genre id does not exist");
 
-  const { error } = validate(genreName);
-  if (error) {
-    res
-      .status(400)
-      .send(
-        `Name property must be at least ${minGenresLength} characters long.`,
-      );
-  }
+    const { error } = validate(genreName);
+    if (error) {
+      res
+        .status(400)
+        .send(
+          `Name property must be at least ${minGenresLength} characters long.`,
+        );
+    }
 
-  genre.name = genreName;
-  const result = await genre.save();
+    genre.name = genreName;
+    const result = await genre.save();
 
-  res.status(401).send("Genre updated:\n", result);
-});
+    res.status(401).send("Genre updated:\n", result);
+  },
+);
 
-router.delete("/api/genres/:id", auth, async (req, res) => {
-  const genreId = req.params.id;
-  const genre = await Genre.findById(genreId);
-  if (!genre) res.status(404).send("The genre id does not exist");
+router.delete(
+  "/api/genres/:id",
+  [authenticationMiddleware, authorizationMiddleware],
+  async (req, res) => {
+    const genreId = req.params.id;
+    const genre = await Genre.findById(genreId);
+    if (!genre) res.status(404).send("The genre id does not exist");
 
-  const result = await Genre.deleteOne(genre);
+    const result = await Genre.deleteOne(genre);
 
-  res.status(200).send("Genre delete:\n", result);
-});
+    res.status(200).send("Genre delete:\n", result);
+  },
+);
 
 module.exports = router;

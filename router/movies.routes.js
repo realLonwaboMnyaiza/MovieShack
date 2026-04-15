@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
-const auth = require("../middleware/auth.middleware");
+const authenticationMiddleware = require("../middleware/authentication.middleware");
+const authorizationMiddleware = require("../middleware/authorization.middleware");
 const { Movie, validate } = require("../models/movie.model");
 const { Genre } = require("../models/genre.model");
 
@@ -20,68 +21,80 @@ router.get("/api/movies/:id", async (req, res) => {
   res.status(200).send(movie);
 });
 
-router.post("/api/movies/", auth, async (req, res) => {
-  const title = req.body.title;
-  const genreId = req.body.genreId;
-  const numberInStock = req.body.numberInStock;
-  const dailyRentalRate = req.body.dailyRentalRate;
+router.post(
+  "/api/movies/",
+  [authenticationMiddleware, authorizationMiddleware],
+  async (req, res) => {
+    const title = req.body.title;
+    const genreId = req.body.genreId;
+    const numberInStock = req.body.numberInStock;
+    const dailyRentalRate = req.body.dailyRentalRate;
 
-  const { error } = validate(req.body);
-  if (error) {
-    res.status(400).send("Reqest no valid");
-  }
+    const { error } = validate(req.body);
+    if (error) {
+      res.status(400).send("Reqest no valid");
+    }
 
-  if (!genreId) res.status(400).send("Genre id invalid");
-  const genre = await Genre.findById(genreId);
+    if (!genreId) res.status(400).send("Genre id invalid");
+    const genre = await Genre.findById(genreId);
 
-  const movie = await new Movie({
-    title,
-    genre,
-    numberInStock,
-    dailyRentalRate,
-  });
+    const movie = await new Movie({
+      title,
+      genre,
+      numberInStock,
+      dailyRentalRate,
+    });
 
-  await movie.save();
-  res.status(401).send("Movie has been saved.");
-});
+    await movie.save();
+    res.status(401).send("Movie has been saved.");
+  },
+);
 
-router.put("/api/movies/:id", auth, async (req, res) => {
-  const movieId = req.params.id;
-  const movie = await Movie.findById(movieId);
+router.put(
+  "/api/movies/:id",
+  [authenticationMiddleware, authorizationMiddleware],
+  async (req, res) => {
+    const movieId = req.params.id;
+    const movie = await Movie.findById(movieId);
 
-  if (!movie) res.status(404).send("An error occured.");
-  const { error } = validate(req.body);
-  if (error) {
-    res.status(400).send("Request no valid.");
-  }
+    if (!movie) res.status(404).send("An error occured.");
+    const { error } = validate(req.body);
+    if (error) {
+      res.status(400).send("Request no valid.");
+    }
 
-  const genreId = req.body.genreId;
-  if (!genreId) res.status(400).send("Genre id invalid");
+    const genreId = req.body.genreId;
+    if (!genreId) res.status(400).send("Genre id invalid");
 
-  const title = req.body.title;
-  const numberOfStock = req.body.numberInStock;
-  const dailyRentalRate = req.body.dailyRentalRate;
+    const title = req.body.title;
+    const numberOfStock = req.body.numberInStock;
+    const dailyRentalRate = req.body.dailyRentalRate;
 
-  const genre = await Genre.findById(genreId);
+    const genre = await Genre.findById(genreId);
 
-  movie.title = title;
-  movie.genre = genre;
-  movie.numberInStock = numberOfStock;
-  movie.dailyRentalRate = dailyRentalRate;
-  await movie.save();
+    movie.title = title;
+    movie.genre = genre;
+    movie.numberInStock = numberOfStock;
+    movie.dailyRentalRate = dailyRentalRate;
+    await movie.save();
 
-  res.status(401).send("Movie updated.");
-});
+    res.status(401).send("Movie updated.");
+  },
+);
 
-router.delete("/api/movies/:id", auth, async (req, res) => {
-  const movieId = req.params.id;
-  const movie = await Movie.findById(movieId);
+router.delete(
+  "/api/movies/:id",
+  [authenticationMiddleware, authorizationMiddleware],
+  async (req, res) => {
+    const movieId = req.params.id;
+    const movie = await Movie.findById(movieId);
 
-  if (!movie) res.status(404).send("Movie does not exist.");
+    if (!movie) res.status(404).send("Movie does not exist.");
 
-  await Movie.deleteOne(movie);
+    await Movie.deleteOne(movie);
 
-  res.status(401).send("Movie deleted.");
-});
+    res.status(401).send("Movie deleted.");
+  },
+);
 
 module.exports = router;

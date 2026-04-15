@@ -30,6 +30,8 @@ router.post("/api/rental/checkout", auth, async (req, res) => {
   });
 
   try {
+    // todo: using lib to accomplish two-phase commit (ACID transations)
+    // check for this packages vuln and alternatives...
     new Fawn.Task()
       .save("rentals", rental)
       .update(
