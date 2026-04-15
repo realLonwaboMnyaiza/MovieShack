@@ -14,7 +14,7 @@ const Model = mongoose.model(modelName, schema);
 
 function validateUsingJoi(input) {
     const schema = Joi.object({
-        name: Joi.string().min(minGenresLength).maxLength(50).required(),
+        name: Joi.string().min(5).maxLength(50).required(),
     });
 
     const isValid = schema.validate(input);
