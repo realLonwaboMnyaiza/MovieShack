@@ -2,11 +2,19 @@ const express = require("express");
 const router = express.Router();
 const _ = require("lodash");
 const bcrypt = require("bcrypt");
+const auth = require("../middleware/auth.middleware");
 const { User, validate } = require("../models/user.model");
 const {
   generateToken,
   validate: authenticationValidation,
 } = require("../models/auth.model");
+
+router.get("/api/user", auth, async (req, res) => {
+  const currentUser = await User.findById(req.user._id).select({
+    password: -1,
+  });
+  res.send(currentUser);
+});
 
 router.post("/api/register/", async (req, res) => {
   const { error } = validate(req.body);
