@@ -1,3 +1,4 @@
+const dotenv = require("dotenv");
 const mongoose = require("mongoose");
 const express = require("express");
 const Joi = require("joi");
@@ -15,6 +16,11 @@ const connectionString = "mongodb://localhost/movieShack";
 
 Fawn.init(connectionString);
 Joi.objectId = require("joi-objectid");
+
+if (!process.env.TOKEN) {
+  console.error("Crucial environment variables are not defined.");
+  process.exit(1);
+}
 
 app.use(express.json());
 app.use(genresRouter);
