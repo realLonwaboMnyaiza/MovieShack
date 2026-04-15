@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+const auth = require("../middleware/auth.middleware");
 const { Rental, validate } = require("../models/rental.model");
 const { Customer } = require("../models/customer.model");
 const { Movie } = require("../models/movie.model");
@@ -9,7 +10,7 @@ router.get("/api/rental/", async (req, res) => {
   res.status(200).send(rentals);
 });
 
-router.post("/api/rental/checkout", async (req, res) => {
+router.post("/api/rental/checkout", auth, async (req, res) => {
   const { error } = validate(req.body);
   if (error) res.status(400).send("An error occured.");
 

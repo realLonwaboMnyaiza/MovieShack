@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+const auth = require("../middleware/auth.middleware");
 const { Movie, validate } = require("../models/movie.model");
 const { Genre } = require("../models/genre.model");
 
@@ -19,7 +20,7 @@ router.get("/api/movies/:id", async (req, res) => {
   res.status(200).send(movie);
 });
 
-router.post("/api/movies/", async (req, res) => {
+router.post("/api/movies/", auth, async (req, res) => {
   const title = req.body.title;
   const genreId = req.body.genreId;
   const numberInStock = req.body.numberInStock;
@@ -44,7 +45,7 @@ router.post("/api/movies/", async (req, res) => {
   res.status(401).send("Movie has been saved.");
 });
 
-router.put("/api/movies/:id", async (req, res) => {
+router.put("/api/movies/:id", auth, async (req, res) => {
   const movieId = req.params.id;
   const movie = await Movie.findById(movieId);
 
@@ -72,7 +73,7 @@ router.put("/api/movies/:id", async (req, res) => {
   res.status(401).send("Movie updated.");
 });
 
-router.delete("/api/movies/:id", async (req, res) => {
+router.delete("/api/movies/:id", auth, async (req, res) => {
   const movieId = req.params.id;
   const movie = await Movie.findById(movieId);
 
