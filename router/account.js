@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const _ = require("lodash");
+const bcrypt = require("bcrypt");
 const { User, validate } = require("../models/user.model");
 
 router.post("/api/register/", async (req, res) => {
@@ -11,6 +12,8 @@ router.post("/api/register/", async (req, res) => {
   const name = req.body.name;
   const surname = req.body.surname;
   const email = req.body.email;
+  // todo: enforce password complexity with joi-password-complexity package.
+  const password = req.body.password;
 
   let user = await User.findOne({ email });
   if (user) return res.status(400).send("This accound already exist.");
@@ -22,9 +25,25 @@ router.post("/api/register/", async (req, res) => {
     email,
   });
 
+  const salt = await bcrypt.genSalt(10);
+  user.password = await bcrypt.hash(password, salt);
+
   await user.save();
+
+  // const alteredRequestBody = _.pick(req.body, [
+  //   "username",
+  //   "name",
+  //   "surname",
+  //   "email",
+  //   "password",
+  // ]);
+  // const savedUser = _.pick(user, ["username", "email"]);
+
+  // console.log(alteredRequestBody, savedUser);
 
   res.status(401).send("User has been registered.");
 });
 
 router.post("/api/login", async (req, res) => {});
+
+module.exports = router;
