@@ -14,8 +14,7 @@ const app = express();
 const port = process.env.PORT || 3000;
 const Fawn = require("fawn");
 
-// todo: move to .env file.
-const connectionString = "mongodb://localhost/movieShack";
+const connectionString = process.env.DATABASE;
 
 Fawn.init(connectionString);
 Joi.objectId = require("joi-objectid");
@@ -28,7 +27,6 @@ if (!process.env.KEY) {
 app.use(formatRequestBody);
 app.use(authenticationMiddleware);
 app.use(authorizationMiddleware);
-
 app.use(genresRouter);
 app.use(customersRouter);
 app.use(movieRouter);
@@ -36,13 +34,17 @@ app.use(rentalRouter);
 app.use(accountRouter);
 
 app.get("/", (req, res) => {
-  res.send("Initiallise headless application.");
+  res.send("Initialize headless application.");
 });
 
-mongoose
-  .connect(connectionString)
-  .then(() => console.log("Connected to database..."))
-  .catch(() => console.log("Error while trying to connect to database!"));
+(async function initializeDatabaseConnection() {
+  try {
+    await mongoose.connect(connectionString);
+    console.log("Connected to database...");
+  } catch (error) {
+    console.log("Error while trying to connect to database!");
+  }
+})();
 
 app.listen(port);
 console.log(`App listening on port ${port}`);
