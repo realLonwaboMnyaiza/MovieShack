@@ -1,15 +1,15 @@
-require("dotenv");
+require("dotenv").config();
 const mongoose = require("mongoose");
 const express = require("express");
 const Joi = require("joi");
 const formatRequestBody = express.json();
 const authenticationMiddleware = require("../middleware/authentication.middleware");
 const authorizationMiddleware = require("../middleware/authorization.middleware");
-const genresRouter = require("../router/genres");
-const customersRouter = require("../router/customers");
-const movieRouter = require("../router/movies");
-const rentalRouter = require("../router/rentals");
-const accountRouter = require("../router/account");
+const genresRouter = require("../router/genres.routes");
+const customersRouter = require("../router/customers.routes");
+const movieRouter = require("../router/movies.routes");
+const rentalRouter = require("../router/rentals.routes");
+const accountRouter = require("../router/account.routes");
 const app = express();
 const port = process.env.PORT || 3000;
 const Fawn = require("fawn");
@@ -20,7 +20,7 @@ const connectionString = "mongodb://localhost/movieShack";
 Fawn.init(connectionString);
 Joi.objectId = require("joi-objectid");
 
-if (!process.env.TOKEN) {
+if (!process.env.KEY) {
   console.error("Crucial environment variables are not defined.");
   process.exit(1);
 }
