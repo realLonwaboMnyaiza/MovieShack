@@ -12,13 +12,16 @@ const rentalRouter = require("../router/rentals.routes");
 const accountRouter = require("../router/account.routes");
 const errorMiddleware = require("../middleware/error.middleware");
 const winston = require("winston");
+require("winston-mongodb");
 const app = express();
 const port = process.env.PORT || 3000;
 const Fawn = require("fawn");
 
-const connectionString = process.env.DATABASE;
+const db = process.env.DATABASE;
 
-Fawn.init(connectionString);
+winston.add(winston.transports.MongoDB, { db });
+
+Fawn.init(db);
 Joi.objectId = require("joi-objectid");
 
 if (!process.env.KEY) {
@@ -47,7 +50,7 @@ app.get("/", (req, res) => {
 
 (async function initializeDatabaseConnection() {
   try {
-    await mongoose.connect(connectionString);
+    await mongoose.connect(db);
     console.log("Connected to database...");
   } catch (error) {
     console.log("Error while trying to connect to database!");
