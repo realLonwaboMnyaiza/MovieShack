@@ -6,6 +6,10 @@ const auth = require("../middleware/authentication.middleware");
 const { User, validate } = require("../models/user.model");
 const { validate: authenticationValidation } = require("../models/auth.model");
 
+router.get("api/", (req, res) => {
+  res.send("Welcome to MovieShack, we hope you enjoy our product offering.");
+});
+
 router.get("/api/user", auth, async (req, res) => {
   const currentUser = await User.findById(req.user._id).select({
     password: -1,
