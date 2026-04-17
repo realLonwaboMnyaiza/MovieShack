@@ -2,19 +2,10 @@ const express = require("express");
 const router = express.Router();
 const authenticationMiddleware = require("../middleware/authentication.middleware");
 const authorizationMiddleware = require("../middleware/authorization.middleware");
+const errorWrapper = require("../utils/http-error-wrapper");
 const { Genre, validate } = require("../models/genre.model");
 
 const minGenresLength = 5;
-
-function errorWrapper(handler) {
-  return async (req, res, next) => {
-    try {
-      await handler(req, res);
-    } catch (error) {
-      next(error);
-    }
-  };
-}
 
 router.get(
   "/api/genres",
@@ -24,25 +15,28 @@ router.get(
   }),
 );
 
-router.get("/api/genres/:id", async (req, res) => {
-  const genreId = req.params.id;
-  const genre = await Genre.findById(genreId);
-  if (!genre) res.status(404).send("The genre id does not exist");
-  if (!validate(req.body)) {
-    res
-      .status(400)
-      .send(
-        `Name property must be at least ${minGenresLength} characters long.`,
-      );
-  }
+router.get(
+  "/api/genres/:id",
+  errorWrapper(async (req, res) => {
+    const genreId = req.params.id;
+    const genre = await Genre.findById(genreId);
+    if (!genre) res.status(404).send("The genre id does not exist");
+    if (!validate(req.body)) {
+      res
+        .status(400)
+        .send(
+          `Name property must be at least ${minGenresLength} characters long.`,
+        );
+    }
 
-  res.send(genre);
-});
+    res.send(genre);
+  }),
+);
 
 router.post(
   "/api/genres",
   [authenticationMiddleware, authorizationMiddleware],
-  async (req, res) => {
+  errorWrapper(async (req, res) => {
     const genreName = req.body.name;
     const { error } = validate(genreName);
     if (error) {
@@ -58,13 +52,13 @@ router.post(
     console.log(result);
 
     res.status(201).send("Genre created:\n", result);
-  },
+  }),
 );
 
 router.put(
   "/api/genres/:id",
   [authenticationMiddleware, authorizationMiddleware],
-  async (req, res) => {
+  errorWrapper(async (req, res) => {
     const genreId = req.params.id;
     const genreName = req.body.name;
     const genre = await Genre.findById(genreId);
@@ -83,13 +77,13 @@ router.put(
     const result = await genre.save();
 
     res.status(401).send("Genre updated:\n", result);
-  },
+  }),
 );
 
 router.delete(
   "/api/genres/:id",
   [authenticationMiddleware, authorizationMiddleware],
-  async (req, res) => {
+  errorWrapper(async (req, res) => {
     const genreId = req.params.id;
     const genre = await Genre.findById(genreId);
     if (!genre) res.status(404).send("The genre id does not exist");
@@ -97,7 +91,7 @@ router.delete(
     const result = await Genre.deleteOne(genre);
 
     res.status(200).send("Genre delete:\n", result);
-  },
+  }),
 );
 
 module.exports = router;
