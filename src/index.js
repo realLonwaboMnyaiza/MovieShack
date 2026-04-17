@@ -1,6 +1,5 @@
 require("dotenv").config();
 const express = require("express");
-const winston = require("winston");
 const Joi = require("joi");
 const Fawn = require("fawn");
 
@@ -10,7 +9,8 @@ const port = process.env.PORT || 3000;
 const formatRequestBody = express.json();
 
 // logging.
-require("../startup/logging");
+const { Logger, logToDatabase } = require("../startup/logging");
+logToDatabase(db);
 
 // config.
 require("../startup/configuration");
@@ -25,7 +25,7 @@ Fawn.init(db);
 Joi.objectId = require("joi-objectid");
 
 process.on("uncaughtException", (error) => {
-  winston.error(error.message, error);
+  Logger.exceptions.handle();
   process.exit(1);
 });
 
@@ -34,4 +34,4 @@ process.on("unhandledRejection", (error) => {
 });
 
 app.listen(port);
-winston.info(`App listening on port ${port}`);
+Logger.info(`App listening on port ${port}`);
