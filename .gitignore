@@ -1,3 +1,6 @@
+# ignore log file.
+exceptions.log
+
 # ignore node modules
 node_modules/*
 
