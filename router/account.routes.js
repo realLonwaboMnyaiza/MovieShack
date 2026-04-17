@@ -42,17 +42,6 @@ router.post("/api/register/", async (req, res) => {
 
   await user.save();
 
-  // const alteredRequestBody = _.pick(req.body, [
-  //   "username",
-  //   "name",
-  //   "surname",
-  //   "email",
-  //   "password",
-  // ]);
-  // const savedUser = _.pick(user, ["username", "email"]);
-
-  // console.log(alteredRequestBody, savedUser);
-
   const token = generateToken();
   res
     .header("x-auth-token", token)
