@@ -21,6 +21,16 @@ const db = process.env.DATABASE;
 
 winston.add(winston.transports.MongoDB, { db });
 
+process.on("uncaughtException", (error) => {
+  winston.error(error.message, error);
+  process.exit(1);
+});
+
+process.on("unhandledRejection", (error) => {
+  winston.error(error.message, error);
+  process.exit(1);
+});
+
 Fawn.init(db);
 Joi.objectId = require("joi-objectid");
 
