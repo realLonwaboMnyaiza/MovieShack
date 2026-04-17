@@ -6,14 +6,23 @@ const { Genre, validate } = require("../models/genre.model");
 
 const minGenresLength = 5;
 
-router.get("/api/genres", async (req, res, next) => {
-  try {
+function errorWrapper(handler) {
+  return async (req, res, next) => {
+    try {
+      await handler(req, res);
+    } catch (error) {
+      next(error);
+    }
+  };
+}
+
+router.get(
+  "/api/genres",
+  errorWrapper(async (req, res) => {
     const genres = await Genre.find().sort({ name: 1 });
     res.send(genres);
-  } catch (error) {
-    next(error);
-  }
-});
+  }),
+);
 
 router.get("/api/genres/:id", async (req, res) => {
   const genreId = req.params.id;

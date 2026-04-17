@@ -27,8 +27,8 @@ if (!process.env.KEY) {
 
 // transform middleware
 app.use(formatRequestBody);
-app.use(authenticationMiddleware);
-app.use(authorizationMiddleware);
+// app.use(authenticationMiddleware);
+// app.use(authorizationMiddleware);
 
 // routes
 app.use(genresRouter);
@@ -38,7 +38,7 @@ app.use(rentalRouter);
 app.use(accountRouter);
 
 // error middleware...
-app.use(errorMiddleware);
+// app.use(errorMiddleware);
 
 app.get("/", (req, res) => {
   res.send("Initialize headless application.");

@@ -4,10 +4,7 @@ const _ = require("lodash");
 const bcrypt = require("bcrypt");
 const auth = require("../middleware/authentication.middleware");
 const { User, validate } = require("../models/user.model");
-const {
-  generateToken,
-  validate: authenticationValidation,
-} = require("../models/auth.model");
+const { validate: authenticationValidation } = require("../models/auth.model");
 
 router.get("/api/user", auth, async (req, res) => {
   const currentUser = await User.findById(req.user._id).select({
@@ -18,7 +15,8 @@ router.get("/api/user", auth, async (req, res) => {
 
 router.post("/api/register/", async (req, res) => {
   const { error } = validate(req.body);
-  if (error) res.status(400).send("Request is not valid.");
+  // todo: application errors need to be more verbose... fix..
+  if (error) res.status(400).send(error.details[0].message);
 
   const username = req.body.username;
   const name = req.body.name;
@@ -42,10 +40,10 @@ router.post("/api/register/", async (req, res) => {
 
   await user.save();
 
-  const token = generateToken();
+  const token = User.generateAuthenticationToken();
   res
     .header("x-auth-token", token)
-    .status(401)
+    .status(201)
     .send("User has been registered.");
 });
 
@@ -67,8 +65,8 @@ router.post("/api/login", async (req, res) => {
   if (!hasAuthenticationCredentials)
     return res.status(400).send("Email or password provided is invalid.");
 
-  const token = generateToken();
-  res.send(token);
+  const token = User.generateAuthenticationToken();
+  res.header("x-auth-token", token).send(token);
 });
 
 module.exports = router;
