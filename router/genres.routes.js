@@ -7,6 +7,7 @@ const { Genre, validate } = require("../models/genre.model");
 
 const minGenresLength = 5;
 
+// todo: get lib to handle errors, used to be express-async-errors...
 router.get(
   "/api/genres",
   errorWrapper(async (req, res) => {

@@ -11,6 +11,7 @@ const movieRouter = require("../router/movies.routes");
 const rentalRouter = require("../router/rentals.routes");
 const accountRouter = require("../router/account.routes");
 const errorMiddleware = require("../middleware/error.middleware");
+const winston = require("winston");
 const app = express();
 const port = process.env.PORT || 3000;
 const Fawn = require("fawn");
