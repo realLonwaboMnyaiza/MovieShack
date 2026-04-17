@@ -39,20 +39,15 @@ router.post(
   [authenticationMiddleware, authorizationMiddleware],
   errorWrapper(async (req, res) => {
     const genreName = req.body.name;
-    const { error } = validate(genreName);
+    const { error } = validate(req.body);
     if (error) {
-      res
-        .status(400)
-        .send(
-          `Name property must be at least ${minGenresLength} characters long.`,
-        );
+      res.status(400).send(error.details[0].message);
     }
 
     const genre = new Genre({ name: genreName });
-    const result = await genre.save();
-    console.log(result);
+    await genre.save();
 
-    res.status(201).send("Genre created:\n", result);
+    res.status(201).send(`Genre created: ${genre.name}`);
   }),
 );
 
@@ -65,7 +60,7 @@ router.put(
     const genre = await Genre.findById(genreId);
     if (!genre) res.status(404).send("The genre id does not exist");
 
-    const { error } = validate(genreName);
+    const { error } = validate(req.body);
     if (error) {
       res
         .status(400)
@@ -75,9 +70,9 @@ router.put(
     }
 
     genre.name = genreName;
-    const result = await genre.save();
+    await genre.save();
 
-    res.status(401).send("Genre updated:\n", result);
+    res.status(401).send(`Genre updated: ${genreName}`);
   }),
 );
 
@@ -89,9 +84,9 @@ router.delete(
     const genre = await Genre.findById(genreId);
     if (!genre) res.status(404).send("The genre id does not exist");
 
-    const result = await Genre.deleteOne(genre);
+    await Genre.deleteOne(genre);
 
-    res.status(200).send("Genre delete:\n", result);
+    res.status(200).send(`Genre deleted: ${genre.name}`);
   }),
 );
 

@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const _ = require("lodash");
 const bcrypt = require("bcrypt");
-const auth = require("../middleware/authentication.middleware");
+const authenticationMiddleware = require("../middleware/authentication.middleware");
 const { User, validate } = require("../models/user.model");
 const { validate: authenticationValidation } = require("../models/auth.model");
 
@@ -10,11 +10,26 @@ router.get("api/", (req, res) => {
   res.send("Welcome to MovieShack, we hope you enjoy our product offering.");
 });
 
-router.get("/api/user", auth, async (req, res) => {
-  const currentUser = await User.findById(req.user._id).select({
-    password: -1,
+router.get("/api/user", authenticationMiddleware, async (req, res) => {
+  const user = await User.findById(req.user._id).select({
+    password: 0,
   });
-  res.send(currentUser);
+  let token = req.get("x-auth-token");
+  if (!token) token = user.generateAuthenticationToken();
+  res.header("x-auth-token", token).status(200).send(user);
+});
+
+router.put("/api/user/permissions/", async (req, res) => {
+  const email = req.body.email;
+  const isAdmin = req.body.isAdmin;
+
+  const user = await User.findOne({ email });
+  if (!user) return res.status(400).send("User does not exist.");
+
+  user.isAdmin = isAdmin;
+  await user.save();
+
+  res.status(201).send("User rights have been elavated to ADMIN.");
 });
 
 router.post("/api/register/", async (req, res) => {
@@ -44,7 +59,7 @@ router.post("/api/register/", async (req, res) => {
 
   await user.save();
 
-  const token = User.generateAuthenticationToken();
+  const token = user.generateAuthenticationToken();
   res
     .header("x-auth-token", token)
     .status(201)
@@ -69,8 +84,12 @@ router.post("/api/login", async (req, res) => {
   if (!hasAuthenticationCredentials)
     return res.status(400).send("Email or password provided is invalid.");
 
-  const token = User.generateAuthenticationToken();
-  res.header("x-auth-token", token).send(token);
+  let token = req.get("x-auth-token");
+  if (!token) token = user.generateAuthenticationToken();
+  res
+    .header("x-auth-token", token)
+    .status(201)
+    .send("User successfully logged in.");
 });
 
 module.exports = router;

@@ -1,4 +1,4 @@
-require("dotenv");
+require("dotenv").config();
 const jwt = require("jsonwebtoken");
 const Joi = require("joi");
 const mongoose = require("mongoose");
@@ -8,43 +8,47 @@ const schema = new mongoose.Schema({
   username: {
     type: String,
     trim: true,
-    min: 5,
-    max: 50,
+    minLength: 5,
+    maxLength: 50,
     required: true,
   },
   name: {
     type: String,
     trim: true,
-    min: 5,
-    max: 50,
+    minLength: 5,
+    maxLength: 50,
     required: true,
   },
   surname: {
     type: String,
     trim: true,
-    min: 5,
-    max: 50,
+    minLength: 5,
+    maxLength: 50,
     required: true,
   },
   email: {
     type: String,
-    min: 5,
-    max: 255,
+    minLength: 5,
+    maxLength: 255,
     required: true,
     unique: true,
   },
   password: {
     type: String,
-    min: 5,
-    max: 1024,
+    minLength: 5,
+    maxLength: 1024,
     required: true,
     unique: true,
   },
-  isAdmin: Boolean,
+  isAdmin: {
+    type: Boolean,
+    default: false,
+    required: true,
+  },
 });
 
 schema.methods.generateAuthenticationToken = function () {
-  const privateKey = process.env.TOKEN;
+  const privateKey = process.env.KEY;
   const payload = { _id: this._id, isAdmin: this.isAdmin };
   return jwt.sign(payload, privateKey, { expiresIn: "24h" });
 };
@@ -58,6 +62,7 @@ function validateUsingJoi(input) {
     surname: Joi.string().min(5).max(50).required(),
     email: Joi.string().min(5).max(255).required().email(),
     password: Joi.string().min(5).max(1024).required(),
+    isAdmin: Joi.boolean().required(),
   });
 
   return schema.validate(input);

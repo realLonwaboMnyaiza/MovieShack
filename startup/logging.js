@@ -1,6 +1,8 @@
 const winston = require("winston");
 require("winston-mongodb");
 
+// todo: read documentation. compare to alt packages.
+// possible logging memory leaks...
 const Logger = winston.createLogger({
   transports: [
     new winston.transports.Console({ colorize: true, prettyPrint: true }),

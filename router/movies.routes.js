@@ -32,7 +32,7 @@ router.post(
 
     const { error } = validate(req.body);
     if (error) {
-      res.status(400).send("Reqest no valid");
+      res.status(400).send(error.details[0].message);
     }
 
     if (!genreId) res.status(400).send("Genre id invalid");
@@ -46,7 +46,7 @@ router.post(
     });
 
     await movie.save();
-    res.status(401).send("Movie has been saved.");
+    res.status(201).send(`Movie has been saved. ${movie}`);
   },
 );
 
@@ -78,7 +78,7 @@ router.put(
     movie.dailyRentalRate = dailyRentalRate;
     await movie.save();
 
-    res.status(401).send("Movie updated.");
+    res.status(201).send(`Movie has been updated: ${movie}.`);
   },
 );
 
@@ -93,7 +93,9 @@ router.delete(
 
     await Movie.deleteOne(movie);
 
-    res.status(401).send("Movie deleted.");
+    res
+      .status(201)
+      .send(`The following movie has been deleted: ${movie.title}`);
   },
 );
 

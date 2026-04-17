@@ -1,7 +1,5 @@
 require("dotenv").config();
 const express = require("express");
-const Joi = require("joi");
-const Fawn = require("fawn");
 
 const app = express();
 const db = process.env.DATABASE;
@@ -20,9 +18,6 @@ require("../startup/database-initialization")(db);
 
 // routes
 require("../startup/endpoints")(app, formatRequestBody);
-
-Fawn.init(db);
-Joi.objectId = require("joi-objectid");
 
 process.on("uncaughtException", (error) => {
   Logger.exceptions.handle();
