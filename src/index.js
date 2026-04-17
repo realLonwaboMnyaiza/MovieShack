@@ -21,6 +21,7 @@ const db = process.env.DATABASE;
 
 winston.add(winston.transports.MongoDB, { db });
 winston.handleExceptions(
+  new winston.transports.Console({ colorize: true, prettyPrint: true }),
   new winston.transports.File({ filename: "exception.log" }),
 );
 
@@ -37,8 +38,7 @@ Fawn.init(db);
 Joi.objectId = require("joi-objectid");
 
 if (!process.env.KEY) {
-  console.error("Crucial environment variables are not defined.");
-  process.exit(1);
+  throw new Error("Crucial environment variables are not defined.");
 }
 
 // transform middleware
@@ -61,13 +61,9 @@ app.get("/", (req, res) => {
 });
 
 (async function initializeDatabaseConnection() {
-  try {
-    await mongoose.connect(db);
-    console.log("Connected to database...");
-  } catch (error) {
-    console.log("Error while trying to connect to database!");
-  }
+  await mongoose.connect(db);
+  winston.info("Connected to database...");
 })();
 
 app.listen(port);
-console.log(`App listening on port ${port}`);
+winston.info(`App listening on port ${port}`);
