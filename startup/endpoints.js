@@ -4,10 +4,23 @@ const movieRouter = require("../router/movies.routes");
 const rentalRouter = require("../router/rentals.routes");
 const accountRouter = require("../router/account.routes");
 
-module.exports = function (app) {
+const authenticationMiddleware = require("../middleware/authentication.middleware");
+const authorizationMiddleware = require("../middleware/authorization.middleware");
+const errorMiddleware = require("../middleware/error.middleware");
+
+module.exports = function (app, formatRequestBody) {
+  // transform middleware
+  app.use(formatRequestBody);
+  // app.use(authenticationMiddleware);
+  // app.use(authorizationMiddleware);
+
+  // routes.
   app.use(genresRouter);
   app.use(customersRouter);
   app.use(movieRouter);
   app.use(rentalRouter);
   app.use(accountRouter);
+
+  // error middleware...
+  // app.use(errorMiddleware);
 };
