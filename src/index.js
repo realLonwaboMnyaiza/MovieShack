@@ -20,6 +20,9 @@ const Fawn = require("fawn");
 const db = process.env.DATABASE;
 
 winston.add(winston.transports.MongoDB, { db });
+winston.handleExceptions(
+  new winston.transports.File({ filename: "exception.log" }),
+);
 
 process.on("uncaughtException", (error) => {
   winston.error(error.message, error);
@@ -27,8 +30,7 @@ process.on("uncaughtException", (error) => {
 });
 
 process.on("unhandledRejection", (error) => {
-  winston.error(error.message, error);
-  process.exit(1);
+  throw error;
 });
 
 Fawn.init(db);
