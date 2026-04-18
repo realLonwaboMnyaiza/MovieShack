@@ -1,4 +1,5 @@
 const express = require("express");
+const mongoose = require("mongoose");
 const router = express.Router();
 const authenticationMiddleware = require("../middleware/authentication.middleware");
 const authorizationMiddleware = require("../middleware/authorization.middleware");
@@ -20,6 +21,9 @@ router.get(
   "/api/genres/:id",
   errorWrapper(async (req, res) => {
     const genreId = req.params.id;
+    if (mongoose.Types.ObjectId.isValid(genreId))
+      return res.status(404).send("Invalid genres ID provided.");
+
     const genre = await Genre.findById(genreId);
     if (!genre) res.status(404).send("The genre id does not exist");
     if (!validate(req.body)) {
