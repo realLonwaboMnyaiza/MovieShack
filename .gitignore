@@ -1,6 +1,9 @@
 # ignore log file.
 exceptions.log
 
+# ignore test coverage folder
+coverage/*
+
 # ignore node modules
 node_modules/*
 
