@@ -28,5 +28,7 @@ process.on("unhandledRejection", (error) => {
   throw error;
 });
 
-app.listen(port);
+const server = app.listen(port);
 Logger.info(`App listening on port ${port}`);
+
+module.exports = server;
