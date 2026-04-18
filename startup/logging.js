@@ -5,6 +5,7 @@ require("winston-mongodb");
 // possible logging memory leaks...
 const Logger = winston.createLogger({
   transports: [
+    // todo: read documentation on adding colorized console transport...
     new winston.transports.Console({ colorize: true, prettyPrint: true }),
   ],
   exceptionHandlers: [
@@ -14,7 +15,7 @@ const Logger = winston.createLogger({
 });
 
 function logToDatabase(db) {
-  Logger.add(new winston.transports.MongoDB({ db, level: "info" }));
+  Logger.add(new winston.transports.MongoDB({ db, level: "error" }));
 }
 
 module.exports.logToDatabase = logToDatabase;
