@@ -1,7 +1,7 @@
 require("dotenv").config();
 const mongoose = require("mongoose");
 const jwt = require("jsonwebtoken");
-const { User } = require("../models/user.model");
+const { User } = require("../../models/user.model");
 
 describe("when user.generateAuthenticationToken is called", () => {
   it("should return a valid JWT.", () => {
