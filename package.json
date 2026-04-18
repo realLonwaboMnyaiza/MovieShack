@@ -5,7 +5,9 @@
   "main": "src/index.js",
   "scripts": {
     "start": "node .",
-    "test": "jest --verbose"
+    "test": "jest --verbose",
+    "test:lite": "jest",
+    "test:coverage": "jest --coverage"
   },
   "keywords": [],
   "author": "",
