@@ -2,6 +2,7 @@ require("dotenv").config();
 const express = require("express");
 
 const app = express();
+// todo: switch value when testing.
 const db = process.env.DATABASE;
 const port = process.env.PORT || 3000;
 const formatRequestBody = express.json();
