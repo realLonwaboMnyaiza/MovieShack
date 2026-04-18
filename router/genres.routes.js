@@ -1,9 +1,9 @@
 const express = require("express");
-const mongoose = require("mongoose");
 const router = express.Router();
 const authenticationMiddleware = require("../middleware/authentication.middleware");
 const authorizationMiddleware = require("../middleware/authorization.middleware");
 const errorWrapper = require("../utils/http-error-wrapper");
+const validateGuidMiddleware = require("../middleware/guid-validation.middleware");
 const { Genre, validate } = require("../models/genre.model");
 
 const minGenresLength = 5;
@@ -19,12 +19,11 @@ router.get(
 
 router.get(
   "/api/genres/:id",
+  validateGuidMiddleware,
   errorWrapper(async (req, res) => {
     const genreId = req.params.id;
-    if (mongoose.Types.ObjectId.isValid(genreId))
-      return res.status(404).send("Invalid genres ID provided.");
-
     const genre = await Genre.findById(genreId);
+
     if (!genre) res.status(404).send("The genre id does not exist");
     if (!validate(req.body)) {
       res
@@ -57,7 +56,7 @@ router.post(
 
 router.put(
   "/api/genres/:id",
-  [authenticationMiddleware, authorizationMiddleware],
+  [authenticationMiddleware, authorizationMiddleware, validateGuidMiddleware],
   errorWrapper(async (req, res) => {
     const genreId = req.params.id;
     const genreName = req.body.name;
@@ -82,7 +81,7 @@ router.put(
 
 router.delete(
   "/api/genres/:id",
-  [authenticationMiddleware, authorizationMiddleware],
+  [authenticationMiddleware, authorizationMiddleware, validateGuidMiddleware],
   errorWrapper(async (req, res) => {
     const genreId = req.params.id;
     const genre = await Genre.findById(genreId);
