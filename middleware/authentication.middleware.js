@@ -11,6 +11,6 @@ module.exports = function authenticate(req, res, next) {
     req.user = decodedToken;
     next();
   } catch (error) {
-    res.status(400).send("Invalid token");
+    res.status(401).send("Could not verity token provided.");
   }
 };
