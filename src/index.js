@@ -1,10 +1,11 @@
-require("dotenv").config();
+const pathModule = require("path");
+const path = pathModule.join(process.cwd(), ".env." + process.env.NODE_ENV);
+require("dotenv").config({ path });
 const express = require("express");
 
 const app = express();
-// todo: switch value when testing.
 const db = process.env.DATABASE;
-const port = process.env.PORT || 3000;
+const port = process.env.PORT;
 const formatRequestBody = express.json();
 
 // logging.
