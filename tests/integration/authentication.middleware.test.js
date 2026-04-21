@@ -10,7 +10,7 @@ describe("Authentication middleware.", () => {
   });
   afterEach(async () => {
     await Genre.remove({});
-    server.close();
+    await server.close();
   });
 
   it("should redeem token when valid token is provided.", async () => {
