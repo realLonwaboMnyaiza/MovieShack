@@ -5,8 +5,8 @@
   "main": "src/index.js",
   "scripts": {
     "start": "node .",
-    "test": "jest --verbose",
-    "test:lite": "jest",
+    "test": "jest --runInBand --detectOpenHandles --forceExit",
+    "test:verbose": "jest --verbose",
     "test:coverage": "jest --coverage"
   },
   "keywords": [],
