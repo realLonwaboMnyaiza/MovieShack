@@ -10,7 +10,7 @@ const minGenresLength = 5;
 
 // todo: get lib to handle errors, used to be express-async-errors...
 router.get(
-  "/api/genres",
+  "/api/genres/",
   errorWrapper(async (req, res) => {
     const genres = await Genre.find().sort({ name: 1 });
     res.send(genres);
@@ -21,7 +21,7 @@ router.get(
   "/api/genres/:id",
   validateGuidMiddleware,
   errorWrapper(async (req, res) => {
-    const genreId = req.params.id;
+    const genreId = req.guid;
     const genre = await Genre.findById(genreId);
 
     if (!genre) res.status(404).send("The genre id does not exist");
@@ -33,12 +33,12 @@ router.get(
         );
     }
 
-    res.send(genre);
+    res.status(200).send(genre);
   }),
 );
 
 router.post(
-  "/api/genres",
+  "/api/genres/",
   [authenticationMiddleware, authorizationMiddleware],
   errorWrapper(async (req, res) => {
     const genreName = req.body.name;
@@ -58,7 +58,7 @@ router.put(
   "/api/genres/:id",
   [authenticationMiddleware, authorizationMiddleware, validateGuidMiddleware],
   errorWrapper(async (req, res) => {
-    const genreId = req.params.id;
+    const genreId = req.guid;
     const genreName = req.body.name;
     const genre = await Genre.findById(genreId);
     if (!genre) res.status(404).send("The genre id does not exist");
@@ -75,7 +75,7 @@ router.put(
     genre.name = genreName;
     await genre.save();
 
-    res.status(401).send(`Genre updated: ${genreName}`);
+    res.status(201).send(`Genre updated: ${genreName}`);
   }),
 );
 
@@ -83,13 +83,13 @@ router.delete(
   "/api/genres/:id",
   [authenticationMiddleware, authorizationMiddleware, validateGuidMiddleware],
   errorWrapper(async (req, res) => {
-    const genreId = req.params.id;
+    const genreId = req.guid;
     const genre = await Genre.findById(genreId);
     if (!genre) res.status(404).send("The genre id does not exist");
 
     await Genre.deleteOne(genre);
 
-    res.status(200).send(`Genre deleted: ${genre.name}`);
+    res.status(201).send(`Genre deleted: ${genre.name}`);
   }),
 );
 

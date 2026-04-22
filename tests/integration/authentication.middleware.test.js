@@ -9,34 +9,34 @@ describe("Authentication middleware.", () => {
     server = require("../../src/index");
   });
   afterEach(async () => {
-    await Genre.remove({});
+    await Genre.deleteMany({});
     await server.close();
   });
 
   it("should redeem token when valid token is provided.", async () => {
     // arrange.
     const user = new User();
+    user.isAdmin = true;
     const genre = new Genre();
     genre.name = "Genre 1";
     const token = user.generateAuthenticationToken();
 
     // act.
     const res = await request(server)
-      .post("api/genres")
+      .post("/api/genres/")
       .set("x-auth-token", token)
-      .send(user);
+      .send(genre);
 
     // assert.
     expect(res.status).toBe(201);
   });
   it("should return 401 when token is not provided.", async () => {
     // arrange.
-    const user = new User();
     const genre = new Genre();
     genre.name = "Genre 1";
 
     // act.
-    const res = await request(server).post("api/genres").send(genre);
+    const res = await request(server).post("/api/genres/").send(genre);
 
     // assert.
     expect(res.status).toBe(401);
@@ -49,7 +49,7 @@ describe("Authentication middleware.", () => {
 
     // act.
     const res = await request(server)
-      .post("api/genres")
+      .post("/api/genres/")
       .set("x-auth-token", token)
       .send(genre);
 

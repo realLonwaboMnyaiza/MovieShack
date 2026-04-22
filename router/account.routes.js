@@ -6,11 +6,13 @@ const authenticationMiddleware = require("../middleware/authentication.middlewar
 const { User, validate } = require("../models/user.model");
 const { validate: authenticationValidation } = require("../models/auth.model");
 
-router.get("api/", (req, res) => {
-  res.send("Welcome to MovieShack, we hope you enjoy our product offering.");
+router.get("/api/", (req, res) => {
+  res
+    .status(200)
+    .send("Welcome to MovieShack, we hope you enjoy our product offering.");
 });
 
-router.get("/api/user", authenticationMiddleware, async (req, res) => {
+router.get("/api/user/", authenticationMiddleware, async (req, res) => {
   const user = await User.findById(req.user._id).select({
     password: 0,
   });
@@ -34,7 +36,6 @@ router.put("/api/user/permissions/", async (req, res) => {
 
 router.post("/api/register/", async (req, res) => {
   const { error } = validate(req.body);
-  // todo: application errors need to be more verbose... fix..
   if (error) res.status(400).send(error.details[0].message);
 
   const username = req.body.username;
@@ -66,7 +67,7 @@ router.post("/api/register/", async (req, res) => {
     .send("User has been registered.");
 });
 
-router.post("/api/login", async (req, res) => {
+router.post("/api/login/", async (req, res) => {
   const { error } = authenticationValidation(req.body);
   if (error) return res.status(400).send(error.details[0].message);
 

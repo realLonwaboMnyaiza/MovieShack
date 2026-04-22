@@ -1,22 +1,20 @@
 const winston = require("winston");
 require("winston-mongodb");
 
-// todo: read documentation. compare to alt packages.
-// possible logging memory leaks...
-const Logger = winston.createLogger({
+const logger = winston.createLogger({
+  level: "info",
+  format: winston.format.json(),
   transports: [
-    // todo: read documentation on adding colorized console transport...
-    new winston.transports.Console({ colorize: true, prettyPrint: true }),
+    new winston.transports.Console({ format: winston.format.prettyPrint() }),
   ],
   exceptionHandlers: [
-    new winston.transports.Console({ colorize: true, prettyPrint: true }),
     new winston.transports.File({ filename: "./exceptions.log" }),
+    new winston.transports.MongoDB({
+      db: "mongodb://localhost/movieShackTest",
+      collection: "logs",
+      level: "error",
+    }),
   ],
 });
 
-function logToDatabase(db) {
-  Logger.add(new winston.transports.MongoDB({ db, level: "error" }));
-}
-
-module.exports.logToDatabase = logToDatabase;
-module.exports.Logger = Logger;
+module.exports.logger = logger;

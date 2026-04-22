@@ -1,4 +1,7 @@
-require("dotenv").config();
+const pathModule = require("path");
+const environment = process.env.NODE_ENV || "dev";
+const path = pathModule.join(process.cwd(), ".env.", environment);
+require("dotenv").config({ path });
 const jwt = require("jsonwebtoken");
 
 module.exports = function authenticate(req, res, next) {
@@ -11,6 +14,7 @@ module.exports = function authenticate(req, res, next) {
     req.user = decodedToken;
     next();
   } catch (error) {
-    res.status(401).send("Could not verity token provided.");
+    res.status(401).send("Could not verify token provided.");
+    next(error);
   }
 };

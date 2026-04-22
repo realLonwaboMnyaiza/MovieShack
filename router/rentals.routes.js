@@ -69,6 +69,8 @@ router.post(
   },
 );
 
-// todo: return rental endpoint...
+router.post("/api/rentals/return/", authenticationMiddleware, (req, res) => {
+  res.status(400).send("Bad Request");
+});
 
 module.exports = router;

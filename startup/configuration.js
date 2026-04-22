@@ -1,7 +1,5 @@
-require("dotenv").config();
-
-module.exports = function () {
-  if (!process.env.KEY) {
+module.exports = function (tokenKey) {
+  if (!tokenKey) {
     throw new Error("Crucial environment variables are not defined.");
   }
 };
