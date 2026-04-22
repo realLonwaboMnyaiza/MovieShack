@@ -43,6 +43,7 @@ router.post(
   errorWrapper(async (req, res) => {
     const genreName = req.body.name;
     const { error } = validate(req.body);
+
     if (error) {
       res.status(400).send(error.details[0].message);
     }
@@ -75,7 +76,7 @@ router.put(
     genre.name = genreName;
     await genre.save();
 
-    res.status(201).send(`Genre updated: ${genreName}`);
+    res.status(201).send(`Genre updated to: ${genreName}`);
   }),
 );
 

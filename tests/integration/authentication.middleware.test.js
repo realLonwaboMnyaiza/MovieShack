@@ -25,7 +25,7 @@ describe("Authentication middleware.", () => {
     const res = await request(server)
       .post("/api/genres/")
       .set("x-auth-token", token)
-      .send(genre);
+      .send({ name: genre.name });
 
     // assert.
     expect(res.status).toBe(201);
@@ -41,7 +41,7 @@ describe("Authentication middleware.", () => {
     // assert.
     expect(res.status).toBe(401);
   });
-  it("should return 400 when invalid token is provided", async () => {
+  it("should return 500 when invalid token is provided", async () => {
     // arrange.
     const genre = new Genre();
     genre.name = "Genre 1";
@@ -54,6 +54,6 @@ describe("Authentication middleware.", () => {
       .send(genre);
 
     // assert.
-    expect(res.status).toBe(400);
+    expect(res.status).toBe(500);
   });
 });

@@ -14,7 +14,6 @@ module.exports = function authenticate(req, res, next) {
     req.user = decodedToken;
     next();
   } catch (error) {
-    res.status(401).send("Could not verify token provided.");
     next(error);
   }
 };

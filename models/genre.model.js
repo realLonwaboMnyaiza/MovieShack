@@ -17,8 +17,7 @@ function validateUsingJoi(input) {
     name: Joi.string().min(5).max(50).required(),
   });
 
-  const isValid = schema.validate(input);
-  return isValid;
+  return schema.validate(input);
 }
 
 module.exports.Genre = Model;

@@ -54,6 +54,7 @@ describe("POST /api/rentals/checkout", () => {
     // assert.
     expect(res.status).toBe(400);
   });
+  // todo: build out feature usign TDD...
   it.skip("should return 400 when movieId is not provided.", () => {
     // arrange.
     // act.
