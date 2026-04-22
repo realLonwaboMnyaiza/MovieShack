@@ -6,7 +6,7 @@ const authenticationMiddleware = require("../middleware/authentication.middlewar
 const { User, validate } = require("../models/user.model");
 const { validate: authenticationValidation } = require("../models/auth.model");
 
-router.get("/api/", (req, res) => {
+router.get("/api/app/", (req, res) => {
   res
     .status(200)
     .send("Welcome to MovieShack, we hope you enjoy our product offering.");
@@ -85,12 +85,18 @@ router.post("/api/login/", async (req, res) => {
   if (!hasAuthenticationCredentials)
     return res.status(400).send("Email or password provided is invalid.");
 
-  let token = req.get("x-auth-token");
-  if (!token) token = user.generateAuthenticationToken();
+  let token = user.generateAuthenticationToken();
+
   res
     .header("x-auth-token", token)
     .status(201)
     .send("User successfully logged in.");
+});
+
+// logout
+router.post("/api/logout/", async (req, res) => {
+  res.setHeader("x-auth-token", "");
+  res.status(201).send("User has been logged out.");
 });
 
 module.exports = router;
