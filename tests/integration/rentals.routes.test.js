@@ -11,8 +11,8 @@ describe("POST /api/rentals/checkout", () => {
   beforeEach(async () => {
     server = require("../../src/index");
 
-    customerId = mongoose.Types.ObjectId();
-    movieId = mongoose.Types.ObjectId();
+    customerId = new mongoose.Types.ObjectId();
+    movieId = new mongoose.Types.ObjectId();
 
     rental = new Rental({
       customer: {
@@ -89,7 +89,7 @@ describe("POST /api/rentals/checkout", () => {
     // act.
     // assert.
   });
-  it.skip("should return the rental.", async () => {
+  it.skip("should return the rental when input is valid.", async () => {
     // arrange.
     // act.
     // assert.
