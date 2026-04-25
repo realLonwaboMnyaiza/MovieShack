@@ -5,7 +5,7 @@
   "main": "src/index.js",
   "scripts": {
     "start": "node .",
-    "test": "jest --runInBand --detectOpenHandles --forceExit",
+    "test": "jest",
     "test:verbose": "jest --verbose",
     "test:coverage": "jest --coverage"
   },
