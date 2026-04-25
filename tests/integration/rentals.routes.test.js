@@ -31,7 +31,7 @@ describe("POST /api/rentals/checkout", () => {
   });
 
   afterEach(async () => {
-    await Rental.remove({});
+    await Rental.deleteMany({});
     await server.close();
   });
 
