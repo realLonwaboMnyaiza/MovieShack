@@ -5,9 +5,13 @@
   "main": "src/index.js",
   "scripts": {
     "start": "node .",
+    "format": "prettier . --write",
+    "lint": "eslint . --fix",
+    "type-check": "tsc",
     "test": "jest",
     "test:verbose": "jest --verbose",
-    "test:coverage": "jest --coverage"
+    "test:coverage": "jest --coverage",
+    "prepare": "husky"
   },
   "keywords": [],
   "author": "",
@@ -17,6 +21,7 @@
     "dotenv": "^17.4.1",
     "express": "^5.2.1",
     "fawn": "^2.1.5",
+    "husky": "^9.1.7",
     "joi": "^18.1.2",
     "joi-objectid": "^4.0.2",
     "jsonwebtoken": "^9.0.3",
@@ -27,7 +32,12 @@
     "winston-mongodb": "^7.0.1"
   },
   "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.3.0",
+    "globals": "^17.6.0",
     "jest": "^30.3.0",
-    "supertest": "^7.2.2"
+    "lint-staged": "^17.0.4",
+    "supertest": "^7.2.2",
+    "typescript": "^6.0.3"
   }
 }
