@@ -1,12 +1,12 @@
-const pathModule = require("path");
+const pathModule = require('path');
 const environment = process.env.NODE_ENV;
-const path = pathModule.join(process.cwd(), ".env." + environment);
-require("dotenv").config({ path });
-const jwt = require("jsonwebtoken");
-const Joi = require("joi");
-const mongoose = require("mongoose");
+const path = pathModule.join(process.cwd(), '.env.' + environment);
+require('dotenv').config({ path });
+const jwt = require('jsonwebtoken');
+const Joi = require('joi');
+const mongoose = require('mongoose');
 
-const name = "User";
+const name = 'User';
 const schema = new mongoose.Schema({
   username: {
     type: String,
@@ -53,7 +53,7 @@ const schema = new mongoose.Schema({
 schema.methods.generateAuthenticationToken = function () {
   const privateKey = process.env.KEY;
   const payload = { _id: this._id, isAdmin: this.isAdmin };
-  return jwt.sign(payload, privateKey, { expiresIn: "24h" });
+  return jwt.sign(payload, privateKey, { expiresIn: '24h' });
 };
 
 const model = mongoose.model(name, schema);

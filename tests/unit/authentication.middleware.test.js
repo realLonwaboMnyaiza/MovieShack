@@ -1,13 +1,13 @@
-const pathModule = require("path");
+const pathModule = require('path');
 const environment = process.env.NODE_ENV;
-const path = pathModule.join(process.cwd(), ".env." + environment);
-require("dotenv").config({ path });
-const mongoose = require("mongoose");
-const authenticate = require("../../middleware/authentication.middleware");
-const { User } = require("../../models/user.model");
+const path = pathModule.join(process.cwd(), '.env.' + environment);
+require('dotenv').config({ path });
+const mongoose = require('mongoose');
+const authenticate = require('../../middleware/authentication.middleware');
+const { User } = require('../../models/user.model');
 
-describe("Authentication middleware.", () => {
-  it("should redeem token with and set the req payload.", () => {
+describe('Authentication middleware.', () => {
+  it('should redeem token with and set the req payload.', () => {
     // arrange.
     const user = new User();
     user._id = new mongoose.Types.ObjectId();

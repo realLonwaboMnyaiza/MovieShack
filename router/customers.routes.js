@@ -1,35 +1,35 @@
-const express = require("express");
+const express = require('express');
 const router = express.Router();
-const authenticationMiddleware = require("../middleware/authentication.middleware");
-const authorizationMiddleware = require("../middleware/authorization.middleware");
-const { Customer, validate } = require("../models/customer.model");
+const authenticationMiddleware = require('../middleware/authentication.middleware');
+const authorizationMiddleware = require('../middleware/authorization.middleware');
+const { Customer, validate } = require('../models/customer.model');
 
-router.get("/api/customers", async (req, res) => {
+router.get('/api/customers', async (req, res) => {
   const customer = await Customer.find().sort({ surname: 1 });
   res.send(customer);
 });
 
-router.get("/api/customers/:id", async (req, res) => {
+router.get('/api/customers/:id', async (req, res) => {
   const customerId = req.params.id;
   const customer = await Customer.findById(customerId);
 
-  if (!customer) res.status(404).send("The customer does not exist.");
+  if (!customer) res.status(404).send('The customer does not exist.');
   if (!validate(req.body)) {
-    res.status(400).send("Data is malformed.");
+    res.status(400).send('Data is malformed.');
   }
 
   res.send(customer);
 });
 
 router.post(
-  "/api/customers/",
+  '/api/customers/',
   [authenticationMiddleware, authorizationMiddleware],
   async (req, res) => {
     const name = req.body.name;
     const surname = req.body.surname;
     const { error } = validate(req.body);
     if (error) {
-      res.status(400).send("Data is malformed.");
+      res.status(400).send('Data is malformed.');
     }
 
     const customer = new Customer({
@@ -44,7 +44,7 @@ router.post(
 );
 
 router.put(
-  "/api/customers/:id",
+  '/api/customers/:id',
   [authenticationMiddleware, authorizationMiddleware],
   async (req, res) => {
     const customerId = req.params.id;
@@ -54,9 +54,9 @@ router.put(
     const surname = req.body.surname;
 
     const { error } = validate(req.body);
-    if (!customer) res.status(404).send("The customer does not exist.");
+    if (!customer) res.status(404).send('The customer does not exist.');
     if (error) {
-      res.status(400).send("Data is malformed.");
+      res.status(400).send('Data is malformed.');
     }
 
     customer.name = name;
@@ -69,13 +69,13 @@ router.put(
 );
 
 router.delete(
-  "/api/customers/:id",
+  '/api/customers/:id',
   [authenticationMiddleware, authorizationMiddleware],
   async (req, res) => {
     const customerId = req.params.id;
     const customer = await Customer.findById(customerId);
 
-    if (!customer) res.status(404).send("The customer does not exist.");
+    if (!customer) res.status(404).send('The customer does not exist.');
     await Customer.deleteOne(customer);
 
     res.send(customerId);

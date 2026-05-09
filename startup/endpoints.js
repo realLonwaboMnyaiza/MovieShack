@@ -1,9 +1,9 @@
-const genresRouter = require("../router/genres.routes");
-const customersRouter = require("../router/customers.routes");
-const movieRouter = require("../router/movies.routes");
-const rentalRouter = require("../router/rentals.routes");
-const accountRouter = require("../router/account.routes");
-const errorMiddleware = require("../middleware/error.middleware");
+const genresRouter = require('../router/genres.routes');
+const customersRouter = require('../router/customers.routes');
+const movieRouter = require('../router/movies.routes');
+const rentalRouter = require('../router/rentals.routes');
+const accountRouter = require('../router/account.routes');
+const errorMiddleware = require('../middleware/error.middleware');
 
 module.exports = function (app, formatRequestBody) {
   // transform middleware

@@ -1,7 +1,7 @@
-const mongoose = require("mongoose");
-const Joi = require("joi");
+const mongoose = require('mongoose');
+const Joi = require('joi');
 
-const modelName = "Genre";
+const modelName = 'Genre';
 const schema = new mongoose.Schema({
   name: {
     type: String,

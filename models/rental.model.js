@@ -1,10 +1,10 @@
-const Joi = require("joi");
-Joi.objectId = require("joi-objectid")(Joi);
-const mongoose = require("mongoose");
-const { customerSchema } = require("./customer.model");
-const { movieDto } = require("./movie.model");
+const Joi = require('joi');
+Joi.objectId = require('joi-objectid')(Joi);
+const mongoose = require('mongoose');
+const { customerSchema } = require('./customer.model');
+const { movieDto } = require('./movie.model');
 
-const name = "Rental";
+const name = 'Rental';
 const schema = new mongoose.Schema({
   customer: {
     type: customerSchema,

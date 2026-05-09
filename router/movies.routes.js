@@ -1,28 +1,28 @@
-const express = require("express");
+const express = require('express');
 const router = express.Router();
-const authenticationMiddleware = require("../middleware/authentication.middleware");
-const authorizationMiddleware = require("../middleware/authorization.middleware");
-const { Movie, validate } = require("../models/movie.model");
-const { Genre } = require("../models/genre.model");
+const authenticationMiddleware = require('../middleware/authentication.middleware');
+const authorizationMiddleware = require('../middleware/authorization.middleware');
+const { Movie, validate } = require('../models/movie.model');
+const { Genre } = require('../models/genre.model');
 
-router.get("/api/movies/", async (req, res) => {
+router.get('/api/movies/', async (req, res) => {
   const movies = await Movie.find();
-  if (!movies) res.status(404).send("No movies exist in the database.");
+  if (!movies) res.status(404).send('No movies exist in the database.');
 
   res.status(200).send(movies);
 });
 
-router.get("/api/movies/:id", async (req, res) => {
+router.get('/api/movies/:id', async (req, res) => {
   const movieId = req.params.id;
   const movie = await Movie.findById(movieId);
 
-  if (!movie) res.status(404).send("Movie does not exist.");
+  if (!movie) res.status(404).send('Movie does not exist.');
 
   res.status(200).send(movie);
 });
 
 router.post(
-  "/api/movies/",
+  '/api/movies/',
   [authenticationMiddleware, authorizationMiddleware],
   async (req, res) => {
     const title = req.body.title;
@@ -35,7 +35,7 @@ router.post(
       res.status(400).send(error.details[0].message);
     }
 
-    if (!genreId) res.status(400).send("Genre id invalid");
+    if (!genreId) res.status(400).send('Genre id invalid');
     const genre = await Genre.findById(genreId);
 
     const movie = await new Movie({
@@ -51,20 +51,20 @@ router.post(
 );
 
 router.put(
-  "/api/movies/:id",
+  '/api/movies/:id',
   [authenticationMiddleware, authorizationMiddleware],
   async (req, res) => {
     const movieId = req.params.id;
     const movie = await Movie.findById(movieId);
 
-    if (!movie) res.status(404).send("An error occured.");
+    if (!movie) res.status(404).send('An error occured.');
     const { error } = validate(req.body);
     if (error) {
-      res.status(400).send("Request no valid.");
+      res.status(400).send('Request no valid.');
     }
 
     const genreId = req.body.genreId;
-    if (!genreId) res.status(400).send("Genre id invalid");
+    if (!genreId) res.status(400).send('Genre id invalid');
 
     const title = req.body.title;
     const numberOfStock = req.body.numberInStock;
@@ -83,13 +83,13 @@ router.put(
 );
 
 router.delete(
-  "/api/movies/:id",
+  '/api/movies/:id',
   [authenticationMiddleware, authorizationMiddleware],
   async (req, res) => {
     const movieId = req.params.id;
     const movie = await Movie.findById(movieId);
 
-    if (!movie) res.status(404).send("Movie does not exist.");
+    if (!movie) res.status(404).send('Movie does not exist.');
 
     await Movie.deleteOne(movie);
 

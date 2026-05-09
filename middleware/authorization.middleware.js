@@ -3,7 +3,7 @@ module.exports = function (req, res, next) {
     return res
       .status(403)
       .send(
-        "Elavated privilege needed to access this resource. Access Denied!",
+        'Elavated privilege needed to access this resource. Access Denied!',
       );
   next();
 };

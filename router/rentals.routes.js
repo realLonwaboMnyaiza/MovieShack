@@ -1,22 +1,22 @@
-require("dotenv").config();
-const express = require("express");
+require('dotenv').config();
+const express = require('express');
 const router = express.Router();
-const Fawn = require("fawn");
-const authenticationMiddleware = require("../middleware/authentication.middleware");
-const { Rental, validate } = require("../models/rental.model");
-const { Customer } = require("../models/customer.model");
-const { Movie } = require("../models/movie.model");
+const Fawn = require('fawn');
+const authenticationMiddleware = require('../middleware/authentication.middleware');
+const { Rental, validate } = require('../models/rental.model');
+const { Customer } = require('../models/customer.model');
+const { Movie } = require('../models/movie.model');
 
 const database = process.env.DATABASE;
 Fawn.init(database);
 
-router.get("/api/rentals/", async (req, res) => {
+router.get('/api/rentals/', async (req, res) => {
   const rentals = await Rental.find().sort({ checkoutDate: -1 });
   res.status(200).send(rentals);
 });
 
 router.post(
-  "/api/rentals/checkout",
+  '/api/rentals/checkout',
   authenticationMiddleware,
   async (req, res) => {
     const { error } = validate(req.body);
@@ -32,9 +32,9 @@ router.post(
     };
 
     if (!customer || !movie)
-      res.status(400).send("Valid customer and movie is required.");
+      res.status(400).send('Valid customer and movie is required.');
 
-    if (movie.numberInStock < 1) res.status(400).send("Movie is out of stock.");
+    if (movie.numberInStock < 1) res.status(400).send('Movie is out of stock.');
 
     const rental = await new Rental({
       customer,
@@ -45,9 +45,9 @@ router.post(
       // todo: using lib to accomplish two-phase commit (ACID transations)
       // check for this packages vuln and alternatives...
       await new Fawn.Task()
-        .save("rentals", rental)
+        .save('rentals', rental)
         .update(
-          "movies",
+          'movies',
           { _id: movie._id },
           {
             $inc: { numberInStock: -1 },
@@ -56,7 +56,7 @@ router.post(
         .run();
     } catch (error) {
       console.log(error);
-      res.status(500).send("Transaction failed.");
+      res.status(500).send('Transaction failed.');
     }
 
     // todo: loadash pick...
@@ -65,13 +65,13 @@ router.post(
       genre: movie.genre,
       rate: movie.dailyRentalRate,
     };
-    res.status(201).send("Movie has been checked out.", checkoutMovie);
+    res.status(201).send('Movie has been checked out.', checkoutMovie);
   },
 );
 
-router.post("/api/rentals/return/", authenticationMiddleware, (req, res) => {
+router.post('/api/rentals/return/', authenticationMiddleware, (req, res) => {
   // todo: build out feature using TDD...
-  res.status(400).send("Bad Request");
+  res.status(400).send('Bad Request');
 });
 
 module.exports = router;

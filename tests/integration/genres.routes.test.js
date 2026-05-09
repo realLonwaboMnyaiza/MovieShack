@@ -1,132 +1,132 @@
-const request = require("supertest");
-const { User } = require("../../models/user.model");
-const { Genre } = require("../../models/genre.model");
+const request = require('supertest');
+const { User } = require('../../models/user.model');
+const { Genre } = require('../../models/genre.model');
 
 let server;
 
-describe("/api/genres/", () => {
+describe('/api/genres/', () => {
   beforeEach(() => {
-    server = require("../../src/index");
+    server = require('../../src/index');
   });
   afterEach(async () => {
     await Genre.deleteMany({});
     await server.close();
   });
 
-  describe("GET /", () => {
-    it("should return all genres.", async () => {
+  describe('GET /', () => {
+    it('should return all genres.', async () => {
       // arrange.
       await Genre.collection.insertMany([
-        { name: "Genre 1" },
-        { name: "Genre 2" },
+        { name: 'Genre 1' },
+        { name: 'Genre 2' },
       ]);
 
       // act.
-      const res = await request(server).get("/api/genres/");
+      const res = await request(server).get('/api/genres/');
 
       // assert.
       expect(res.status).toBe(200);
       expect(res.body.length).toBe(2);
-      expect(res.body.some((g) => g.name === "Genre 1")).toBeTruthy();
+      expect(res.body.some((g) => g.name === 'Genre 1')).toBeTruthy();
     });
   });
-  describe("GET /:id", () => {
-    it("should return a genre when ID is provided.", async () => {
+  describe('GET /:id', () => {
+    it('should return a genre when ID is provided.', async () => {
       // arrange.
-      const genre = new Genre({ name: "Genre 1" });
+      const genre = new Genre({ name: 'Genre 1' });
       await genre.save();
 
       // act.
-      const res = await request(server).get("/api/genres/" + genre._id);
+      const res = await request(server).get('/api/genres/' + genre._id);
 
       // assert.
       expect(res.status).toBe(200);
-      expect(res.body).toHaveProperty("name", genre.name);
+      expect(res.body).toHaveProperty('name', genre.name);
     });
-    it("should return 404 when invalid ID is provided.", async () => {
+    it('should return 404 when invalid ID is provided.', async () => {
       // arrange.
       // act.
-      const res = await request(server).get("/api/genres/1");
+      const res = await request(server).get('/api/genres/1');
 
       // assert.
       expect(res.status).toBe(404);
     });
   });
-  describe("POST /", () => {
-    it("should return 401 when user is not logged in.", async () => {
+  describe('POST /', () => {
+    it('should return 401 when user is not logged in.', async () => {
       // arrange.
       const genre = {
-        name: "Genre 1",
+        name: 'Genre 1',
       };
 
       // act.
-      const res = await request(server).post("/api/genres/").send(genre);
+      const res = await request(server).post('/api/genres/').send(genre);
 
       // assert.
       expect(res.status).toBe(401);
     });
-    it("should return 403 when user does not have suffient permissions.", async () => {
+    it('should return 403 when user does not have suffient permissions.', async () => {
       // arrange.
       const user = new User();
       const genre = new Genre();
-      genre.name = "1234";
+      genre.name = '1234';
       const token = user.generateAuthenticationToken();
 
       // act.
       const res = await request(server)
-        .post("/api/genres/")
-        .set("x-auth-token", token)
+        .post('/api/genres/')
+        .set('x-auth-token', token)
         .send(genre);
 
       // assert.
       expect(res.status).toBe(403);
     });
-    it("should return 400 when genre name is less than 5 characters.", async () => {
+    it('should return 400 when genre name is less than 5 characters.', async () => {
       // arrange.
       const user = new User();
       user.isAdmin = true;
       const genre = new Genre();
-      genre.name = "1234";
+      genre.name = '1234';
       const token = user.generateAuthenticationToken();
 
       // act.
       const res = await request(server)
-        .post("/api/genres/")
-        .set("x-auth-token", token)
+        .post('/api/genres/')
+        .set('x-auth-token', token)
         .send(genre);
 
       // assert.
       expect(res.status).toBe(400);
     });
-    it("should return 400 when genre name is more than 50 characters.", async () => {
+    it('should return 400 when genre name is more than 50 characters.', async () => {
       // arrange.
       const user = new User();
       user.isAdmin = true;
       const genre = new Genre();
-      genre.name = new Array(52).join("a");
+      genre.name = new Array(52).join('a');
       const token = user.generateAuthenticationToken();
 
       // act.
       const res = await request(server)
-        .post("/api/genres/")
-        .set("x-auth-token", token)
+        .post('/api/genres/')
+        .set('x-auth-token', token)
         .send(genre);
 
       // assert.
       expect(res.status).toBe(400);
     });
-    it("should save the genre when when it is valid.", async () => {
+    it('should save the genre when when it is valid.', async () => {
       // arrange.
       const user = new User();
       user.isAdmin = true;
       const genre = new Genre();
-      genre.name = "Action";
+      genre.name = 'Action';
       const token = user.generateAuthenticationToken();
 
       // act.
       const res = await request(server)
-        .post("/api/genres/")
-        .set("x-auth-token", token)
+        .post('/api/genres/')
+        .set('x-auth-token', token)
         .send({ name: genre.name });
 
       // debug: had to filter by name... weird genre._id returns next value from guid driver :)
@@ -136,19 +136,19 @@ describe("/api/genres/", () => {
       expect(res.status).toBe(201);
       expect(sut).not.toBeNull();
     });
-    it("should return the genre when it is saved.", async () => {
+    it('should return the genre when it is saved.', async () => {
       // arrange.
       const user = new User();
-      user.name = "John Smith";
+      user.name = 'John Smith';
       user.isAdmin = true;
       const genre = new Genre();
-      genre.name = "Action";
+      genre.name = 'Action';
       const token = user.generateAuthenticationToken();
 
       // act.
       const res = await request(server)
-        .post("/api/genres/")
-        .set("x-auth-token", token)
+        .post('/api/genres/')
+        .set('x-auth-token', token)
         .send({ name: genre.name });
 
       // assert.

@@ -1,13 +1,13 @@
-const pathModule = require("path");
+const pathModule = require('path');
 const environment = process.env.NODE_ENV;
-const path = pathModule.join(process.cwd(), ".env." + environment);
-require("dotenv").config({ path });
-const mongoose = require("mongoose");
-const jwt = require("jsonwebtoken");
-const { User } = require("../../models/user.model");
+const path = pathModule.join(process.cwd(), '.env.' + environment);
+require('dotenv').config({ path });
+const mongoose = require('mongoose');
+const jwt = require('jsonwebtoken');
+const { User } = require('../../models/user.model');
 
-describe("when user.generateAuthenticationToken is called", () => {
-  it("should return a valid JWT.", () => {
+describe('when user.generateAuthenticationToken is called', () => {
+  it('should return a valid JWT.', () => {
     // arrange.
     const privateKey = process.env.KEY;
     const payload = {

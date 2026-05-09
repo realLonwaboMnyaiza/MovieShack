@@ -1,16 +1,16 @@
-const express = require("express");
+const express = require('express');
 const router = express.Router();
-const authenticationMiddleware = require("../middleware/authentication.middleware");
-const authorizationMiddleware = require("../middleware/authorization.middleware");
-const errorWrapper = require("../utils/http-error-wrapper");
-const validateGuidMiddleware = require("../middleware/guid-validation.middleware");
-const { Genre, validate } = require("../models/genre.model");
+const authenticationMiddleware = require('../middleware/authentication.middleware');
+const authorizationMiddleware = require('../middleware/authorization.middleware');
+const errorWrapper = require('../utils/http-error-wrapper');
+const validateGuidMiddleware = require('../middleware/guid-validation.middleware');
+const { Genre, validate } = require('../models/genre.model');
 
 const minGenresLength = 5;
 
 // todo: get lib to handle errors, used to be express-async-errors...
 router.get(
-  "/api/genres/",
+  '/api/genres/',
   errorWrapper(async (req, res) => {
     const genres = await Genre.find().sort({ name: 1 });
     res.send(genres);
@@ -18,13 +18,13 @@ router.get(
 );
 
 router.get(
-  "/api/genres/:id",
+  '/api/genres/:id',
   validateGuidMiddleware,
   errorWrapper(async (req, res) => {
     const genreId = req.guid;
     const genre = await Genre.findById(genreId);
 
-    if (!genre) res.status(404).send("The genre id does not exist");
+    if (!genre) res.status(404).send('The genre id does not exist');
     if (!validate(req.body)) {
       res
         .status(400)
@@ -38,7 +38,7 @@ router.get(
 );
 
 router.post(
-  "/api/genres/",
+  '/api/genres/',
   [authenticationMiddleware, authorizationMiddleware],
   errorWrapper(async (req, res) => {
     const genreName = req.body.name;
@@ -56,13 +56,13 @@ router.post(
 );
 
 router.put(
-  "/api/genres/:id",
+  '/api/genres/:id',
   [authenticationMiddleware, authorizationMiddleware, validateGuidMiddleware],
   errorWrapper(async (req, res) => {
     const genreId = req.guid;
     const genreName = req.body.name;
     const genre = await Genre.findById(genreId);
-    if (!genre) res.status(404).send("The genre id does not exist");
+    if (!genre) res.status(404).send('The genre id does not exist');
 
     const { error } = validate(req.body);
     if (error) {
@@ -81,12 +81,12 @@ router.put(
 );
 
 router.delete(
-  "/api/genres/:id",
+  '/api/genres/:id',
   [authenticationMiddleware, authorizationMiddleware, validateGuidMiddleware],
   errorWrapper(async (req, res) => {
     const genreId = req.guid;
     const genre = await Genre.findById(genreId);
-    if (!genre) res.status(404).send("The genre id does not exist");
+    if (!genre) res.status(404).send('The genre id does not exist');
 
     await Genre.deleteOne(genre);
 

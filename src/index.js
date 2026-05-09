@@ -1,8 +1,8 @@
-const pathModule = require("path");
+const pathModule = require('path');
 const environment = process.env.NODE_ENV;
-const path = pathModule.join(process.cwd(), ".env." + environment);
-require("dotenv").config({ path });
-const express = require("express");
+const path = pathModule.join(process.cwd(), '.env.', environment);
+require('dotenv').config({ path });
+const express = require('express');
 
 const app = express();
 const db = process.env.DATABASE;
@@ -12,24 +12,24 @@ const privateKey = process.env.KEY;
 const formatRequestBody = express.json();
 
 // logging.
-const { logger } = require("../startup/logging");
+const { logger } = require('../startup/logging');
 
 // config.
-require("../startup/configuration")(privateKey);
+require('../startup/configuration')(privateKey);
 
 // database ini...
-require("../startup/database-initialization")(db);
-logger.info("Connected to database...");
+require('../startup/database-initialization')(db);
+logger.info('Connected to database...');
 
 // routes
-require("../startup/endpoints")(app, formatRequestBody);
+require('../startup/endpoints')(app, formatRequestBody);
 
-process.on("uncaughtException", (error) => {
+process.on('uncaughtException', (error) => {
   logger.exceptions.handle();
   process.exit(1);
 });
 
-process.on("unhandledRejection", (error) => {
+process.on('unhandledRejection', (error) => {
   throw error;
 });
 
