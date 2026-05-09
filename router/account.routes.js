@@ -93,7 +93,7 @@ router.post("/api/login/", async (req, res) => {
     .send("User successfully logged in.");
 });
 
-// logout
+// todo: add logout test.
 router.post("/api/logout/", async (req, res) => {
   res.setHeader("x-auth-token", "");
   res.status(201).send("User has been logged out.");

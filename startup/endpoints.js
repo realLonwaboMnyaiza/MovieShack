@@ -3,16 +3,11 @@ const customersRouter = require("../router/customers.routes");
 const movieRouter = require("../router/movies.routes");
 const rentalRouter = require("../router/rentals.routes");
 const accountRouter = require("../router/account.routes");
-
-const authenticationMiddleware = require("../middleware/authentication.middleware");
-const authorizationMiddleware = require("../middleware/authorization.middleware");
 const errorMiddleware = require("../middleware/error.middleware");
 
 module.exports = function (app, formatRequestBody) {
   // transform middleware
   app.use(formatRequestBody);
-  // app.use(authenticationMiddleware);
-  // app.use(authorizationMiddleware);
 
   // routes.
   app.use(genresRouter);
@@ -22,5 +17,5 @@ module.exports = function (app, formatRequestBody) {
   app.use(accountRouter);
 
   // error middleware...
-  // app.use(errorMiddleware);
+  app.use(errorMiddleware);
 };
