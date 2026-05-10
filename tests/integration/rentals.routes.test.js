@@ -8,9 +8,11 @@ describe('POST /api/rentals/checkout', () => {
   let movieId;
   let rental;
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     server = require('../../src/index');
+  });
 
+  beforeEach(async () => {
     customerId = new mongoose.Types.ObjectId();
     movieId = new mongoose.Types.ObjectId();
 
@@ -32,6 +34,9 @@ describe('POST /api/rentals/checkout', () => {
 
   afterEach(async () => {
     await Rental.deleteMany({});
+  });
+
+  afterAll(async () => {
     await server.close();
   });
 

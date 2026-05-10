@@ -5,11 +5,13 @@ const { Genre } = require('../../models/genre.model');
 let server;
 
 describe('/api/genres/', () => {
-  beforeEach(() => {
+  beforeAll(() => {
     server = require('../../src/index');
   });
   afterEach(async () => {
     await Genre.deleteMany({});
+  });
+  afterAll(async () => {
     await server.close();
   });
 
