@@ -15,19 +15,24 @@ Backend API application used for viewing all the movies we have to offer.
 
 - Install Dependencies:
   `npm install` / `npm i`
-- Install Mongod (Steps TBC)
+- Install MongoDb
+  > check status of Mongo daemon `systemctl status mongod.service`
+  > start MongoDB `sudo systemctl start mongod.service`
 - Run Test Locally `npm test` / `npm t`
-- Run App Locally `npm start`
 - Lint App `npm lint`
 - Format using code standards `npm format`
 - Check Types `npm type-check`
 
+---
+
+- Run App Locally `npm start` / `nodemon`(\*if package is installed)
+- Use REST Client i.e. Postman to query movies.
+
 ## Future Features
 
-1. Use TypeScript.
-2. Containerize Application via Docker.
-3. Accompanying .NET API.
-4. Redis as caching layer.
-5. NginX (reverse proxy & load balancing).
-6. CI/CD via GitHub Workflows.
-7. Application Architectural Diagram.
+1. Accompanying .NET API.
+2. CI/CD via GitHub Workflows.
+3. Application Architectural Diagram.
+4. NginX (reverse proxy & load balancing).
+5. Redis as caching layer.
+6. Containerize Application via Docker.

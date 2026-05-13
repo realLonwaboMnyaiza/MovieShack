@@ -8,7 +8,7 @@ describe('POST /api/rentals/checkout', () => {
   let movieId;
   let rental;
 
-  beforeAll(async () => {
+  beforeAll(() => {
     server = require('../../src/index');
   });
 
@@ -37,7 +37,7 @@ describe('POST /api/rentals/checkout', () => {
   });
 
   afterAll(async () => {
-    await server.close();
+    if (server) await server.close();
   });
 
   it('should return 401 if user is not logged in.', async () => {
