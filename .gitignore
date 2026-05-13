@@ -4,6 +4,9 @@ exceptions.log
 # ignore test coverage folder
 coverage/*
 
+# ignore dist folder
+dist/*
+
 # ignore node modules
 node_modules/*
 
