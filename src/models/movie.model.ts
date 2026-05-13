@@ -1,0 +1,68 @@
+import Joi from "joi";
+import joiObjectId from 'joi-objectid';
+import mongoose from "mongoose";
+import { genreSchema } from "./genre.model"; 
+
+interface JoiWithObjectId extends Joi.Root {
+  objectId(): Joi.StringSchema;
+};
+
+const name = 'Movie';
+const schema = new mongoose.Schema({
+  title: {
+    type: String,
+    trim: true,
+    minLength: 5,
+    maxLength: 255,
+    required: true,
+  },
+  genre: {
+    type: genreSchema,
+    required: true,
+  },
+  numberInStock: {
+    type: Number,
+    min: 0,
+    required: true,
+  },
+  dailyRentalRate: {
+    type: Number,
+    min: 1,
+    required: true,
+  },
+});
+
+const dto = new mongoose.Schema({
+  title: {
+    type: String,
+    trim: true,
+    minLength: 5,
+    maxLength: 255,
+    required: true,
+  },
+  dailyRentalRate: {
+    type: Number,
+    min: 1,
+    required: true,
+  },
+});
+
+const model = mongoose.model(name, schema);
+
+const JoiObjectId: JoiWithObjectId = joiObjectId(Joi);
+
+function validateWithJoi(input) {
+  const schema = Joi.object({
+    title: Joi.string().min(5).max(50).required(),
+    genreId: JoiObjectId.objectId().required(),
+    numberInStock: Joi.number().min(0).required(),
+    dailyRentalRate: Joi.number().min(1).required(),
+  });
+
+  return schema.validate(input);
+}
+
+export { model as Movie };
+export { schema as movieSchema };
+export { dto as movieDto };
+export { validateWithJoi as validate };
