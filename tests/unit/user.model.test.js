@@ -1,6 +1,6 @@
 const pathModule = require('path');
 const environment = process.env.NODE_ENV;
-const path = pathModule.join(process.cwd(), '.env.' + environment);
+const path = pathModule.join(process.cwd(), `.env.${environment}`);
 require('dotenv').config({ path });
 const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
