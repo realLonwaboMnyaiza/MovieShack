@@ -1,6 +1,12 @@
 import Joi from "joi";
 import mongoose from "mongoose";
 
+interface CustomerPayload {
+  name: string;
+  surname: string;
+  isPremium: boolean;
+};
+
 const modelName = 'Customer';
 const schema = new mongoose.Schema({
   name: {
@@ -23,7 +29,7 @@ const schema = new mongoose.Schema({
 
 const model = mongoose.model(modelName, schema);
 
-function validateWithJoi(input) {
+function validateWithJoi(input: CustomerPayload) {
   const schema = Joi.object({
     name: Joi.string().min(5).max(50).required(),
     surname: Joi.string().min(5).max(50).required(),

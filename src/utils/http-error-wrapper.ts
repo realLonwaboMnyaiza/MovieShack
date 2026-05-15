@@ -1,5 +1,7 @@
-export default function errorWrapper(handler) {
-  return async (req, res, next) => {
+import { Request, Response, NextFunction } from "express";
+
+export default function errorWrapper(handler: Function) {
+  return async (req: Request, res: Response, next: NextFunction) => {
     try {
       await handler(req, res);
     } catch (error) {

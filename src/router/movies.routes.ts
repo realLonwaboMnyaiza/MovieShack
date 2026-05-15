@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { Request, Response } from 'express';
 import { Movie, validate } from '../models/movie.model';
 import { Genre } from '../models/genre.model';
 import authenticate from '../middleware/authentication.middleware';
@@ -6,14 +6,14 @@ import authorize from '../middleware/authorization.middleware';
 
 const router = express.Router();
 
-router.get('/api/movies/', async (req, res) => {
+router.get('/api/movies/', async (req: Request, res: Response) => {
   const movies = await Movie.find();
   if (!movies) res.status(404).send('No movies exist in the database.');
 
   res.status(200).send(movies);
 });
 
-router.get('/api/movies/:id', async (req, res) => {
+router.get('/api/movies/:id', async (req: Request, res: Response) => {
   const movieId = req.params.id;
   const movie = await Movie.findById(movieId);
 
@@ -22,7 +22,7 @@ router.get('/api/movies/:id', async (req, res) => {
   res.status(200).send(movie);
 });
 
-router.post('/api/movies/', [authenticate, authorize], async (req, res) => {
+router.post('/api/movies/', [authenticate, authorize], async (req: Request, res: Response) => {
   const title = req.body.title;
   const genreId = req.body.genreId;
   const numberInStock = req.body.numberInStock;
@@ -30,7 +30,7 @@ router.post('/api/movies/', [authenticate, authorize], async (req, res) => {
 
   const { error } = validate(req.body);
   if (error) {
-    res.status(400).send(error.details[0].message);
+    res.status(400).send(error?.details[0]?.message);
   }
 
   if (!genreId) res.status(400).send('Genre id invalid');
@@ -47,11 +47,10 @@ router.post('/api/movies/', [authenticate, authorize], async (req, res) => {
   res.status(201).send(`Movie has been saved. ${movie}`);
 });
 
-router.put('/api/movies/:id', [authenticate, authorize], async (req, res) => {
+router.put('/api/movies/:id', [authenticate, authorize], async (req: Request, res: Response) => {
   const movieId = req.params.id;
   const movie = await Movie.findById(movieId);
 
-  if (!movie) res.status(404).send('An error occured.');
   const { error } = validate(req.body);
   if (error) {
     res.status(400).send('Request no valid.');
@@ -66,11 +65,12 @@ router.put('/api/movies/:id', [authenticate, authorize], async (req, res) => {
 
   const genre = await Genre.findById(genreId);
 
-  movie.title = title;
-  movie.genre = genre;
-  movie.numberInStock = numberOfStock;
-  movie.dailyRentalRate = dailyRentalRate;
-  await movie.save();
+  if (!movie || !genre) res.status(404).send('An error occured.');
+  movie!.title = title;
+  if (genre) movie!.genre = genre;
+  movie!.numberInStock = numberOfStock;
+  movie!.dailyRentalRate = dailyRentalRate;
+  await movie!.save();
 
   res.status(201).send(`Movie has been updated: ${movie}.`);
 });
@@ -78,17 +78,17 @@ router.put('/api/movies/:id', [authenticate, authorize], async (req, res) => {
 router.delete(
   '/api/movies/:id',
   [authenticate, authorize],
-  async (req, res) => {
+  async (req: Request, res: Response) => {
     const movieId = req.params.id;
     const movie = await Movie.findById(movieId);
 
     if (!movie) res.status(404).send('Movie does not exist.');
 
-    await Movie.deleteOne(movie);
+    await Movie.deleteOne({_id: movieId});
 
     res
       .status(201)
-      .send(`The following movie has been deleted: ${movie.title}`);
+      .send(`The following movie has been deleted: ${movie?.title}`);
   },
 );
 

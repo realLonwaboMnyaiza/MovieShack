@@ -2,14 +2,30 @@ import pathModule from 'path';
 import config from 'dotenv';
 import jwt, { SignOptions } from 'jsonwebtoken';
 import Joi from 'joi';
-import mongoose from 'mongoose';
+import { Schema, model, Model } from 'mongoose';
 const environment = process.env.NODE_ENV;
-const path = pathModule.join(process.cwd(), '.env.' + environment);
+const path = pathModule.join(process.cwd(), `.env.${environment}`);
 
 config.config({ path });
 
+interface UserPayload {
+  username: string;
+  name: string;
+  surname: string;
+  email: string;
+  password: string;
+  isAdmin: boolean;
+};
+
+
+interface UserExtendedMethods {
+  generateAuthenticationToken(): string;
+}
+
+type UserModel = Model<UserPayload, {} , UserExtendedMethods>;
+
 const name = 'User';
-const schema = new mongoose.Schema({
+const schema = new Schema<UserPayload, UserModel, UserExtendedMethods>({
   username: {
     type: String,
     trim: true,
@@ -52,16 +68,17 @@ const schema = new mongoose.Schema({
   },
 });
 
-schema.methods.generateAuthenticationToken = function () {
-  const privateKey = process.env.KEY;
+schema.methods.generateAuthenticationToken = function (): string {
+  // todo: refactor possible null values from node process var..
+  const privateKey = process.env.KEY || '';
   const payload = { _id: this._id, isAdmin: this.isAdmin };
   const options: SignOptions = { expiresIn: '24h' };
   return jwt.sign(payload, privateKey, options);
 };
 
-const model = mongoose.model(name, schema);
+export const User = model<UserPayload, UserModel>(name, schema);
 
-function validateUsingJoi(input) {
+function validateUsingJoi(input: UserPayload) {
   const schema = Joi.object({
     username: Joi.string().min(5).max(50).required(),
     name: Joi.string().min(5).max(50).required(),
@@ -74,5 +91,5 @@ function validateUsingJoi(input) {
   return schema.validate(input);
 }
 
-export { model as User};
 export { validateUsingJoi as validate };
+export type { UserPayload };

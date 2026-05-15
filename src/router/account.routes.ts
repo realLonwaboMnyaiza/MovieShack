@@ -1,28 +1,29 @@
-import express from 'express';
+import express, { Request, Response } from 'express';
 import _ from 'lodash';
 import bcrypt from 'bcrypt';
 import authenticate from '../middleware/authentication.middleware';
 import { User, validate } from '../models/user.model';
-import { validate } from '../models/auth.model';
+import authenticationValidation from '../models/auth.model';
 
 const router = express.Router();
 
-router.get('/api/app/', (req, res) => {
+router.get('/api/app/', (req: Request, res: Response) => {
   res
     .status(200)
     .send('Welcome to MovieShack, we hope you enjoy our product offering.');
 });
 
-router.get('/api/user/', authenticate, async (req, res) => {
-  const user = await User.findById(req.user._id).select({
-    password: 0,
+router.get('/api/user/', authenticate, async (req: Request, res: Response) => {
+  const userToken = req.token._id; 
+  const user = await User.findById(userToken).select({
+    password: 0, // do not include password in response.
   });
   let token = req.get('x-auth-token');
-  if (!token) token = user.generateAuthenticationToken();
+  if (!token) token = user?.generateAuthenticationToken();
   res.header('x-auth-token', token).status(200).send(user);
 });
 
-router.put('/api/user/permissions/', async (req, res) => {
+router.put('/api/user/permissions/', async (req: Request, res: Response) => {
   const email = req.body.email;
   const isAdmin = req.body.isAdmin;
 
@@ -32,12 +33,12 @@ router.put('/api/user/permissions/', async (req, res) => {
   user.isAdmin = isAdmin;
   await user.save();
 
-  res.status(201).send('User rights have been elavated to ADMIN.');
+  return res.status(201).send('User rights have been elavated to ADMIN.');
 });
 
-router.post('/api/register/', async (req, res) => {
+router.post('/api/register/', async (req: Request, res: Response) => {
   const { error } = validate(req.body);
-  if (error) res.status(400).send(error.details[0].message);
+  if (error) res.status(400).send(error?.details[0]?.message);
 
   const username = req.body.username;
   const name = req.body.name;
@@ -62,15 +63,15 @@ router.post('/api/register/', async (req, res) => {
   await user.save();
 
   const token = user.generateAuthenticationToken();
-  res
+  return res
     .header('x-auth-token', token)
     .status(201)
     .send('User has been registered.');
 });
 
-router.post('/api/login/', async (req, res) => {
+router.post('/api/login/', async (req: Request, res: Response) => {
   const { error } = authenticationValidation(req.body);
-  if (error) return res.status(400).send(error.details[0].message);
+  if (error) return res.status(400).send(error?.details[0]?.message);
 
   const email = req.body.email;
   const password = req.body.password;
@@ -88,16 +89,16 @@ router.post('/api/login/', async (req, res) => {
 
   let token = user.generateAuthenticationToken();
 
-  res
+  return res
     .header('x-auth-token', token)
     .status(201)
     .send('User successfully logged in.');
 });
 
 // todo: add logout test.
-router.post('/api/logout/', async (req, res) => {
+router.post('/api/logout/', async (req: Request, res: Response) => {
   res.setHeader('x-auth-token', '');
-  res.status(201).send('User has been logged out.');
+  return res.status(201).send('User has been logged out.');
 });
 
 export default router;

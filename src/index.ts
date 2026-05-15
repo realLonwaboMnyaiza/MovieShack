@@ -1,10 +1,9 @@
 import pathModule from 'path';
-import config from 'dotenv';
+import dotenv from 'dotenv';
 import express from 'express';
 const environment:string = process.env.NODE_ENV || 'dev';
-const path:string = pathModule.join(process.cwd(), '.env.', environment);
-
-config.config({ path });
+const path:string = pathModule.join(process.cwd(), `.env.${environment}`);
+dotenv.config({ path });
 
 const app = express();
 const db = process.env.DATABASE;
@@ -14,29 +13,32 @@ const privateKey = process.env.KEY;
 const formatRequestBody = express.json();
 
 // logging.
-// const { logger } = require('../startup/logging');
-import logger from './startup/logging';
+import Logger from './startup/logging';
+const logger = new Logger(db, 'logs', 'error');
 
 // config.
-require('../startup/configuration')(privateKey);
+import initilize from './startup/configuration';
+initilize(privateKey);
 
 // database ini...
-require('../startup/database-initialization')(db);
-logger.info('Connected to database...');
+import initializeDatabase from './startup/database-initialization';
+initializeDatabase(db);
+logger.log().info(`Connected to ${environment} database...`);
 
 // routes
-require('../startup/endpoints')(app, formatRequestBody);
+import routeConfig from './startup/endpoints';
+routeConfig(app, formatRequestBody);
 
-process.on('uncaughtException', (error) => {
-  logger.exceptions.handle();
+process.on('uncaughtException', (): never => {
+  logger.log().exceptions.handle();
   process.exit(1);
 });
 
-process.on('unhandledRejection', (error) => {
+process.on('unhandledRejection', (error: Error): Error => {
   throw error;
 });
 
 const server = app.listen(port);
-logger.info(`App listening on port ${port}`);
+logger.log().info(`App listening on port ${port}`);
 
 module.exports = server;

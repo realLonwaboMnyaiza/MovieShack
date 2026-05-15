@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { Request, Response } from 'express';
 import authenticate from '../middleware/authentication.middleware';
 import authorize from '../middleware/authorization.middleware';
 import errorWrapper from '../utils/http-error-wrapper';
@@ -11,7 +11,7 @@ const minGenresLength = 5;
 // todo: get lib to handle errors, used to be express-async-errors...
 router.get(
   '/api/genres/',
-  errorWrapper(async (req, res) => {
+  errorWrapper(async (req: Request, res: Response) => {
     const genres = await Genre.find().sort({ name: 1 });
     res.send(genres);
   }),
@@ -20,7 +20,7 @@ router.get(
 router.get(
   '/api/genres/:id',
   validateGuid,
-  errorWrapper(async (req, res) => {
+  errorWrapper(async (req: Request, res: Response) => {
     const genreId = req.guid;
     const genre = await Genre.findById(genreId);
 
@@ -40,12 +40,12 @@ router.get(
 router.post(
   '/api/genres/',
   [authenticate, authorize],
-  errorWrapper(async (req, res) => {
+  errorWrapper(async (req: Request, res: Response) => {
     const genreName = req.body.name;
-    const { error } = validate(req.body);
+    const { error } = validate(genreName);
 
     if (error) {
-      res.status(400).send(error.details[0].message);
+      res.status(400).send(error?.details[0]?.message);
     }
 
     const genre = new Genre({ name: genreName });
@@ -58,13 +58,13 @@ router.post(
 router.put(
   '/api/genres/:id',
   [authenticate, authorize, validateGuid],
-  errorWrapper(async (req, res) => {
+  errorWrapper(async (req:Request, res:Response) => {
     const genreId = req.guid;
     const genreName = req.body.name;
-    const genre = await Genre.findById(genreId);
+    let genre = await Genre.findById(genreId);
     if (!genre) res.status(404).send('The genre id does not exist');
 
-    const { error } = validate(req.body);
+    const { error } = validate(genreName);
     if (error) {
       res
         .status(400)
@@ -73,8 +73,8 @@ router.put(
         );
     }
 
-    genre.name = genreName;
-    await genre.save();
+    genre!.name = genreName;
+    await genre!.save();
 
     res.status(201).send(`Genre updated to: ${genreName}`);
   }),
@@ -83,15 +83,15 @@ router.put(
 router.delete(
   '/api/genres/:id',
   [authenticate, authorize, validateGuid],
-  errorWrapper(async (req, res) => {
+  errorWrapper(async (req: Request, res: Response) => {
     const genreId = req.guid;
     const genre = await Genre.findById(genreId);
     if (!genre) res.status(404).send('The genre id does not exist');
 
-    await Genre.deleteOne(genre);
+    await Genre.deleteOne({_id: genreId});
 
-    res.status(201).send(`Genre deleted: ${genre.name}`);
+    res.status(201).send(`Genre deleted: ${genre?.name}`);
   }),
 );
 
-module.exports = router;
+export default router;

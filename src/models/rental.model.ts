@@ -1,12 +1,17 @@
 import Joi from "joi";
-import joiObjectId from 'joi-objectid';
+// import joiObjectId from 'joi-objectid';
 import mongoose from "mongoose";
 import { customerSchema } from "./customer.model";
 import { movieDto } from "./movie.model";
 
-interface JoiWithObjectId extends Joi.Root {
-  objectId(): Joi.StringSchema;
-}
+// interface JoiWithObjectId extends Joi.Root {
+//   objectId(): Joi.StringSchema;
+// }
+interface CompositePayload {
+  customerId: string;
+  movieId: string;
+};
+
 const name = 'Rental';
 const schema = new mongoose.Schema({
   customer: {
@@ -31,12 +36,12 @@ const schema = new mongoose.Schema({
 });
 const model = mongoose.model(name, schema);
 
-const JoiObjectId: JoiWithObjectId = joiObjectId(Joi);
+// const JoiObjectId: JoiWithObjectId = joiObjectId(Joi);
 
-function validateUsingJoi(input) {
+function validateUsingJoi(input: CompositePayload) {
   const schema = Joi.object({
-    customerId: JoiObjectId.objectId().required(),
-    movieId: JoiObjectId.objectId().required(),
+    // customerId: JoiObjectId.objectId().required(),
+    // movieId: JoiObjectId.objectId().required(),
   });
 
   return schema.validate(input);
