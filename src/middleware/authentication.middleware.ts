@@ -1,6 +1,6 @@
 import pathModule from 'path';
 import config from 'dotenv';
-import jwt, { JwtPayload } from 'jsonwebtoken';
+import jwt, { type JwtPayload } from 'jsonwebtoken';
 import { Request, Response, NextFunction } from 'express';
 
 const environment = process.env.NODE_ENV || 'dev';
