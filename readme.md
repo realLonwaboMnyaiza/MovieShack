@@ -6,7 +6,7 @@ Backend API application used for viewing all the movies we have to offer.
 
 - JavaScript / TypeScript
 - JWT
-- ViTest / Jest
+- Jest
 - NodeJs
 - Express
 - MongoDb
