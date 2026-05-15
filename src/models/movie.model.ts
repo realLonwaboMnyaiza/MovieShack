@@ -1,12 +1,13 @@
 import Joi from "joi";
-// import joiObjectId from 'joi-objectid';
+import joiObjectId from 'joi-objectid';
 import mongoose from "mongoose";
 import { genreSchema } from "./genre.model"; 
 import type { GenrePayload } from "./genre.model";
 
-// interface JoiWithObjectId extends Joi.Root {
-//   objectId(): Joi.StringSchema;
-// };
+interface JoiWithObjectId extends Joi.Root {
+  objectId(): Joi.StringSchema;
+};
+
 interface MoviePayload {
   title: string;
   genre: GenrePayload;
@@ -56,12 +57,12 @@ const dto = new mongoose.Schema({
 
 const model = mongoose.model(name, schema);
 
-// const JoiObjectId: JoiWithObjectId = joiObjectId(Joi);
+const JoiObjectId: JoiWithObjectId = joiObjectId(Joi);
 
 function validateWithJoi(input: MoviePayload) {
   const schema = Joi.object({
     title: Joi.string().min(5).max(50).required(),
-    // genreId: JoiObjectId.objectId().required(),
+    genreId: JoiObjectId.objectId().required(),
     numberInStock: Joi.number().min(0).required(),
     dailyRentalRate: Joi.number().min(1).required(),
   });

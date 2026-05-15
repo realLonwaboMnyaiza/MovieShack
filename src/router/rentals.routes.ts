@@ -1,5 +1,5 @@
 import express, { Request, Response } from 'express';
-// import Fawn from 'fawn';
+import Fawn from 'fawn';
 import authenticate from '../middleware/authentication.middleware';
 import { Rental, validate } from '../models/rental.model';
 import { Customer } from '../models/customer.model';
@@ -7,8 +7,8 @@ import { Movie } from '../models/movie.model';
 
 const router = express.Router();
 
-// const database = process.env.DATABASE;
-// Fawn.init(database);
+const database = process.env.DATABASE;
+Fawn.init(database);
 
 router.get('/api/rentals/', async (req: Request, res: Response) => {
   const rentals = await Rental.find().sort({ checkoutDate: -1 });
@@ -24,34 +24,34 @@ router.post('/api/rentals/checkout', authenticate, async (req: Request, res: Res
   const customer = await Customer.findById(customerId);
   const movie = await Movie.findById(movieId);
   if (!movie) res.status(404).send('Movie with the specified ID does not exist');
-  // const movieDto = {
-  //   title: movie?.title,
-  //   dailyRentalRate: movie?.dailyRentalRate,
-  // };
+  const movieDto = {
+    title: movie?.title,
+    dailyRentalRate: movie?.dailyRentalRate,
+  };
 
   if (!customer )
     res.status(400).send('Valid customer is required.');
 
   if (movie!.numberInStock < 1) res.status(400).send('Movie is out of stock.');
 
-  // const rental = await new Rental({
-  //   customer,
-  //   movieDto,
-  // });
+  const rental = await new Rental({
+    customer,
+    movieDto,
+  });
 
   try {
     // todo: using lib to accomplish two-phase commit (ACID transations)
     // check for this packages vuln and alternatives...
-    // await new Fawn.Task()
-    //   .save('rentals', rental)
-    //   .update(
-    //     'movies',
-    //     { _id: movie?._id },
-    //     {
-    //       $inc: { numberInStock: -1 },
-    //     },
-    //   )
-    //   .run();
+    await new Fawn.Task()
+      .save('rentals', rental)
+      .update(
+        'movies',
+        { _id: movie?._id },
+        {
+          $inc: { numberInStock: -1 },
+        },
+      )
+      .run();
   } catch (error) {
     res.status(500).send('Transaction failed.');
   }
