@@ -11,7 +11,7 @@
     "target": "esnext",
     // For nodejs:
     "lib": ["esnext"],
-    "types": ["node"],
+    "types": ["node", "jest"],
     // "traceResolution": true,
     // and npm install -D @types/node
 
@@ -39,5 +39,10 @@
     "noUncheckedSideEffectImports": true,
     "moduleDetection": "force",
     "skipLibCheck": true,
+  },
+  "include": ["src/**/*", "./types/**/*.d.ts"],
+  "exclude": ["tests/**/*"],
+  "ts-node": {
+    "files": true
   }
 }
