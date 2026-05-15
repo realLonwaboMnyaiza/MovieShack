@@ -6,7 +6,7 @@ Backend API application used for viewing all the movies we have to offer.
 
 - JavaScript / TypeScript
 - JWT
-- Jest
+- ViTest
 - NodeJs
 - Express
 - MongoDb
@@ -31,8 +31,7 @@ Backend API application used for viewing all the movies we have to offer.
 ## Future Features
 
 1. Accompanying .NET API.
-2. CI/CD via GitHub Workflows.
-3. Application Architectural Diagram.
-4. NginX (reverse proxy & load balancing).
-5. Redis as caching layer.
-6. Containerize Application via Docker.
+2. Application Architectural Diagram.
+3. NginX (reverse proxy & load balancing).
+4. Redis as caching layer.
+5. Containerize Application via Docker.
