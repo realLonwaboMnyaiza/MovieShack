@@ -29,6 +29,9 @@ logger.log().info(`Connected to ${environment} database...`);
 import routeConfig from './startup/endpoints';
 routeConfig(app, formatRequestBody);
 
+import runServer from './startup/server';
+runServer(app, port as string, logger.log().info)
+
 process.on('uncaughtException', (): never => {
   logger.log().exceptions.handle();
   process.exit(1);
@@ -38,7 +41,4 @@ process.on('unhandledRejection', (error: Error): Error => {
   throw error;
 });
 
-const server = app.listen(port);
-logger.log().info(`App listening on port ${port}`);
-
-module.exports = server;
+export default app;
