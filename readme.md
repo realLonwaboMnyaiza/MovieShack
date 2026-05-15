@@ -16,8 +16,8 @@ Backend API application used for viewing all the movies we have to offer.
 - Install Dependencies:
   `npm install` / `npm i`
 - Install MongoDb
-  > check status of Mongo daemon `systemctl status mongod.service`
-  > start MongoDB `sudo systemctl start mongod.service`
+  - check status of Mongo daemon `systemctl status mongod.service`
+  - start MongoDB `sudo systemctl start mongod.service`
 - Run Test Locally `npm test` / `npm t`
 - Lint App `npm lint`
 - Format using code standards `npm format`
@@ -25,7 +25,7 @@ Backend API application used for viewing all the movies we have to offer.
 
 ---
 
-- Run App Locally `npm start` / `nodemon`(\*if package is installed)
+- Run App Locally `npm start` / Hot Reload with: `nodemon` (\*package is installed)
 - Use REST Client i.e. Postman to query movies.
 
 ## Future Features
