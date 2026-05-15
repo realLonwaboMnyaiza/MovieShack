@@ -1,2 +1,2 @@
 npx lint-staged 
-npx jest tests/unit/
+npx vitest tests/unit/
