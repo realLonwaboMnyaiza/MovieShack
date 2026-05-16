@@ -9,8 +9,9 @@ const path = pathModule.join(process.cwd(), `.env.${environment}`);
 dotenv.config({path});
 
 // todo: refactor keep things DRY. Move to centralized loc. 
-export default function serve() {
-    app.listen(port);
+
+    app.listen(port, () => {
     new Logger(db, 'logs', 'info')
     .log().info(`App listening on port ${port}`);
-}
+    })
+    // console.log('Server listening');

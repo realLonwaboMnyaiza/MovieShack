@@ -2,7 +2,7 @@
   "name": "movieshack",
   "version": "1.2.3",
   "description": "",
-  "main": "src/index.ts",
+  "main": "src/server.ts",
   "scripts": {
     "prepare": "husky || true",
     "start": "ts-node .",
