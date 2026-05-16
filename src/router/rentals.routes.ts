@@ -34,7 +34,7 @@ router.post('/api/rentals/checkout', authenticate, async (req: Request, res: Res
 
   if (movie!.numberInStock < 1) res.status(400).send('Movie is out of stock.');
 
-  const rental = await new Rental({
+  const rental = new Rental({
     customer,
     movieDto,
   });

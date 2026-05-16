@@ -50,3 +50,4 @@ function validateUsingJoi(input: CompositePayload) {
 
 export { model as Rental };
 export { validateUsingJoi as validate };
+export { type CompositePayload };
