@@ -7,7 +7,6 @@ dotenv.config({ path });
 
 const app = express();
 const db = process.env.DATABASE;
-const port = process.env.PORT;
 const privateKey = process.env.KEY;
 
 const formatRequestBody = express.json();
@@ -28,9 +27,6 @@ logger.log().info(`Connected to ${environment} database...`);
 // routes
 import routeConfig from './startup/endpoints';
 routeConfig(app, formatRequestBody);
-
-import runServer from './startup/server';
-runServer(app, port as string, logger.log().info)
 
 process.on('uncaughtException', (): never => {
   logger.log().exceptions.handle();
