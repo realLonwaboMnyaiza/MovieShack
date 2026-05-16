@@ -1,18 +1,12 @@
-const request = require('supertest');
-const { User } = require('../../models/user.model');
-const { Genre } = require('../../models/genre.model');
-
-let server;
+import { describe, it, expect, afterEach } from 'vitest';
+import request from 'supertest';
+import { User } from '../../src/models/user.model';
+import { Genre, type GenrePayload } from '../../src/models/genre.model';
+import server from '../../src/index';
 
 describe('/api/genres/', () => {
-  beforeAll(() => {
-    server = require('../../src/index');
-  });
   afterEach(async () => {
     await Genre.deleteMany({});
-  });
-  afterAll(async () => {
-    await server.close();
   });
 
   describe('GET /', () => {
@@ -25,11 +19,12 @@ describe('/api/genres/', () => {
 
       // act.
       const res = await request(server).get('/api/genres/');
+      console.log('Response: ', res);
 
       // assert.
       expect(res.status).toBe(200);
       expect(res.body.length).toBe(2);
-      expect(res.body.some((g) => g.name === 'Genre 1')).toBeTruthy();
+      expect(res.body.some((g: GenrePayload) => g.name === 'Genre 1')).toBeTruthy();
     });
   });
   describe('GET /:id', () => {

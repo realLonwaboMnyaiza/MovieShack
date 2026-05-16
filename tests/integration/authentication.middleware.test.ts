@@ -1,18 +1,12 @@
-const request = require('supertest');
-const { User } = require('../../models/user.model');
-const { Genre } = require('../../models/genre.model');
-
-let server;
+import { describe, it, expect, afterEach } from 'vitest';
+import request from 'supertest';
+import { User } from '../../src/models/user.model';
+import { Genre } from '../../src/models/genre.model';
+import server from '../../src/index';
 
 describe('Authentication middleware.', () => {
-  beforeAll(() => {
-    server = require('../../src/index');
-  });
   afterEach(async () => {
     await Genre.deleteMany({});
-  });
-  afterAll(async () => {
-    await server.close();
   });
 
   it('should redeem token when valid token is provided.', async () => {
